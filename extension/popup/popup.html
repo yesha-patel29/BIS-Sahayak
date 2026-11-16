@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BIS Sahayak</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-left">
+      <div class="logo">IS</div>
+      <div>
+        <div class="brand-name">BIS Sahayak</div>
+        <div class="brand-sub">Indian Standards Assistant</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="lang-toggle">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="hi">हिं</button>
+        <button class="lang-btn" data-lang="gu">ગુ</button>
+      </div>
+      <button class="icon-btn" id="btn-clear" title="New conversation" aria-label="New conversation">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+      </button>
+      <div class="status">
+        <span class="status-dot" id="status-dot"></span>
+        <span class="status-text" id="status-text">…</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Analysis Action Card -->
+  <div class="page-action-card" id="page-action-card">
+    <div class="page-info-row">
+      <span class="page-icon">🌐</span>
+      <span class="page-target-title" id="page-target-title">Active Tab: …</span>
+    </div>
+    <div class="page-action-buttons">
+      <button class="btn-analyze" id="btn-analyze-page">
+        <svg class="scan-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+          <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+          <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+          <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+          <line x1="7" y1="12" x2="17" y2="12"></line>
+        </svg>
+        <span id="btn-analyze-text">Read &amp; Analyze This Page</span>
+      </button>
+      <button class="btn-secondary" id="btn-retry-page" style="display:none;" title="Retry Analysis">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+        <span id="btn-retry-text">Retry</span>
+      </button>
+      <button class="btn-secondary" id="btn-analyze-selection" style="display:none;" title="Analyze Selected Text">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        <span id="btn-selection-text">Analyze Selection</span>
+      </button>
+    </div>
+    <div class="privacy-notice" id="privacy-notice">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      <span id="privacy-text">Analyzed only on click · Zero background tracking</span>
+    </div>
+  </div>
+
+  <!-- Page Context Banner (dismissible) -->
+  <div class="page-banner" id="page-banner" style="display:none;">
+    <span class="page-banner-icon">📄</span>
+    <span class="page-banner-text" id="page-banner-text">Page detected</span>
+    <button class="page-banner-close" id="page-banner-close" aria-label="Dismiss">✕</button>
+  </div>
+
+  <!-- Chat Area -->
+  <div class="chat" id="chat"></div>
+
+  <!-- Quick Action Chips -->
+  <div class="chips" id="chips"></div>
+
+  <!-- Image Attachment Preview Container (Prototype) -->
+  <div class="image-preview-container" id="image-preview-container" style="display:none;">
+    <div class="image-preview-card">
+      <img id="image-preview-thumb" src="" alt="Selected Product Image" />
+      <div class="image-preview-info">
+        <span class="image-preview-name" id="image-preview-name">image.png</span>
+        <span class="image-preview-badge" id="image-preview-badge">Image Preview</span>
+      </div>
+      <button class="btn-remove-image" id="btn-remove-image" title="Remove image" aria-label="Remove image">
+        ✕
+      </button>
+    </div>
+  </div>
+
+  <!-- Input Bar -->
+  <div class="inputbar">
+    <!-- Hidden File Input for Prototype Image Upload -->
+    <input type="file" id="image-file-input" accept="image/png, image/jpeg, image/jpg, image/webp" style="display:none;" />
+    
+    <!-- Plus / Upload Button -->
+    <button class="btn-attach" id="btn-attach-image" title="Attach image (Prototype)" aria-label="Attach product image">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+    </button>
+
+    <input
+      id="input"
+      type="text"
+      placeholder="Ask about standards, certification…"
+      autocomplete="off"
+    />
+    <button id="send" aria-label="Send">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <a href="http://127.0.0.1:8000/" target="_blank" id="open-full">
+      Open full BIS Sahayak ↗
+    </a>
+    <span class="footer-sep">·</span>
+    <span class="footer-note">SIH 2026 Prototype</span>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

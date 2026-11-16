@@ -1,0 +1,2022 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIS Sahayak — AI Assistant for Indian Standards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F9FC;
+    --paper-raised:#FFFFFF;
+    --ink:#0B1F3A;
+    --ink-soft:#34445A;
+    --stone:#64748B;
+    --stone-light:#94A3B8;
+    --bis-blue:#1357A6;
+    --bis-blue-dark:#0B3B78;
+    --bis-blue-light:#EAF2FF;
+    --seal:#087443;
+    --seal-light:#E9F7F0;
+    --saffron:#F28C28;
+    --saffron-light:#FFF3E6;
+    --marigold:#D98E04;
+    --marigold-light:#FFF3E6;
+    --danger:#B42318;
+    --danger-light:#FEECEB;
+    --border:#E2E8F0;
+    --border-strong:#CBD5E1;
+    --shadow-sm:0 2px 8px rgba(15,23,42,0.05);
+    --shadow-md:0 10px 30px rgba(15,23,42,0.08);
+    --shadow-lg:0 20px 50px rgba(15,23,42,0.12);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(circle at 85% 5%, rgba(19,87,166,0.07), transparent 28%),
+      radial-gradient(circle at 10% 35%, rgba(242,140,40,0.035), transparent 24%),
+      var(--paper);
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    line-height:1.5;
+    min-height:100vh;
+  }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 28px; }
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:600; color:var(--ink); }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+  .hi{ font-family:'Noto Sans Devanagari','Inter',sans-serif; }
+  button{ font-family:'Inter',sans-serif; cursor:pointer; }
+
+  /* ---------------- Header / Nav ---------------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(255,255,255,0.88);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border-bottom:1px solid rgba(226,232,240,0.85);
+    box-shadow:0 1px 10px rgba(15,23,42,0.03);
+  }
+  .header-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 0; gap:16px; flex-wrap:wrap;
+  }
+  .brand{ display:flex; align-items:center; cursor:pointer; flex-shrink:0; }
+  .brand-logo{
+    width:155px;
+    height:auto;
+    display:block;
+    transition:transform 0.2s ease;
+  }
+  .brand:hover .brand-logo{ transform:translateY(-1px); }
+
+  nav{ display:flex; gap:2px; flex-wrap:wrap; }
+  nav button{
+    background:none;
+    border:none;
+    font-size:13px;
+    font-weight:600;
+    color:var(--stone);
+    padding:9px 13px;
+    border-radius:8px;
+    transition:all 0.18s ease;
+  }
+  nav button:hover{ background:var(--bis-blue-light); color:var(--bis-blue); }
+  nav button.active{ background:var(--bis-blue); color:#fff; box-shadow:0 4px 12px rgba(19,87,166,0.18); }
+
+  .lang-toggle{ display:flex; border:1px solid var(--border-strong); border-radius:20px; overflow:hidden; flex-shrink:0; }
+  .lang-toggle button{ font-size:12px; font-weight:500; padding:6px 12px; background:var(--paper-raised); color:var(--stone); border:none; border-radius:0; }
+  .lang-toggle button.active{ background:var(--ink); color:var(--paper); }
+
+  section{ display:none; padding:44px 0 64px; }
+  section.active{ display:block; }
+
+  /* ---------------- Hero ---------------- */
+  .hero{ padding:72px 0 54px; }
+  .hero-grid{ display:grid; grid-template-columns:minmax(0,1.15fr) minmax(340px,0.85fr); gap:64px; align-items:center; }
+  .eyebrow{ display:inline-flex; align-items:center; gap:8px; font-size:11px; font-weight:700; letter-spacing:1px; color:var(--bis-blue); background:var(--bis-blue-light); border:1px solid #D5E5FF; padding:7px 12px; border-radius:999px; margin-bottom:22px; }
+  .eyebrow-dot{ width:7px; height:7px; border-radius:50%; background:var(--saffron); box-shadow:0 0 0 4px rgba(242,140,40,0.12); }
+  .hero h1{ font-size:52px; line-height:1.08; max-width:700px; letter-spacing:-1.6px; font-weight:700; }
+  .hero-highlight{ display:block; color:var(--bis-blue); }
+  .hero p.lead{ font-size:17px; color:var(--stone); max-width:610px; margin-top:20px; line-height:1.75; }
+  .hero-trust{ display:flex; flex-wrap:wrap; gap:16px; margin-top:22px; font-size:12px; font-weight:600; color:var(--ink-soft); }
+  .hero-ctas{ display:flex; gap:12px; margin-top:30px; flex-wrap:wrap; }
+  .btn{ font-size:14px; font-weight:700; padding:13px 20px; border-radius:9px; border:1px solid var(--border-strong); display:inline-flex; align-items:center; gap:9px; transition:all 0.2s ease; }
+  .btn-primary{ background:var(--bis-blue); color:#fff; border-color:var(--bis-blue); box-shadow:0 8px 20px rgba(19,87,166,0.18); }
+  .btn-primary:hover{ background:var(--bis-blue-dark); transform:translateY(-1px); box-shadow:0 12px 25px rgba(19,87,166,0.24); }
+  .btn-secondary{ background:#fff; color:var(--ink); border-color:var(--border-strong); }
+  .btn-secondary:hover{ border-color:var(--bis-blue); color:var(--bis-blue); transform:translateY(-1px); }
+  .btn svg{ width:16px; height:16px; }
+  .hero-ai-card{ background:#fff; border:1px solid var(--border); border-radius:20px; box-shadow:var(--shadow-lg); overflow:hidden; position:relative; }
+  .hero-ai-card::before{ content:""; position:absolute; width:180px; height:180px; border-radius:50%; background:rgba(19,87,166,0.08); top:-90px; right:-70px; }
+  .ai-card-top{ display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--border); position:relative; }
+  .ai-status{ display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color:var(--ink); }
+  .ai-status-dot{ width:8px; height:8px; border-radius:50%; background:var(--seal); box-shadow:0 0 0 4px rgba(8,116,67,0.10); }
+  .ai-badge{ font-size:9px; font-weight:800; letter-spacing:1px; color:var(--bis-blue); background:var(--bis-blue-light); padding:5px 8px; border-radius:5px; }
+  .ai-card-body{ padding:30px 28px; }
+  .ai-label{ font-size:10px; font-weight:800; letter-spacing:1.3px; color:var(--stone-light); margin-bottom:10px; }
+  .ai-card-body h3{ font-family:'Inter',sans-serif; font-size:25px; line-height:1.25; letter-spacing:-0.5px; max-width:350px; }
+  .ai-example{ display:flex; gap:12px; margin-top:24px; padding:14px; border:1px solid var(--border); background:var(--paper); border-radius:12px; }
+  .ai-example-icon{ width:32px; height:32px; border-radius:8px; background:var(--bis-blue); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .ai-example-label{ font-size:10px; font-weight:700; color:var(--stone-light); text-transform:uppercase; letter-spacing:0.6px; }
+  .ai-example p{ font-size:13px; font-weight:600; color:var(--ink-soft); margin-top:4px; line-height:1.5; }
+  .ai-capabilities{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:20px; }
+  .ai-capabilities div{ font-size:12px; font-weight:600; color:var(--ink-soft); padding:9px 10px; border-radius:8px; background:#F8FAFC; border:1px solid var(--border); }
+  .ai-card-footer{ display:flex; justify-content:space-between; align-items:center; padding:13px 20px; background:#F8FAFC; border-top:1px solid var(--border); font-size:11px; font-weight:600; color:var(--stone); }
+  .stats-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:0; background:#fff; border:1px solid var(--border); border-radius:14px; overflow:hidden; margin-top:58px; box-shadow:var(--shadow-sm); }
+  .stat{ background:#fff; padding:20px 16px; text-align:center; border-right:1px solid var(--border); }
+  .stat:last-child{ border-right:none; }
+  .stat .num{ font-family:'Inter',sans-serif; font-size:23px; font-weight:800; color:var(--bis-blue); }
+  .stat .lbl{ font-size:11.5px; color:var(--stone); margin-top:4px; }
+  .hero-note{ text-align:center; font-size:10.5px; color:var(--stone-light); margin-top:12px; }
+
+  /* ---------------- Feature grid ---------------- */
+  .section-head{ margin-bottom:26px; }
+  .section-head h2{ font-size:24px; }
+  .section-head p{ color:var(--stone); font-size:14px; margin-top:6px; max-width:520px; }
+
+  .feature-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:36px; }
+  .feature{
+    background:rgba(255,255,255,0.92);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:22px;
+    cursor:pointer;
+    transition:all 0.2s ease;
+    box-shadow:var(--shadow-sm);
+  }
+  .feature:hover{ border-color:#B8D1F2; transform:translateY(-3px); box-shadow:var(--shadow-md); }
+  .feature .icon{
+    width:40px; height:40px; border-radius:10px; background:var(--bis-blue-light); color:var(--bis-blue);
+    display:flex; align-items:center; justify-content:center; margin-bottom:16px;
+  }
+  .feature .icon svg{ width:17px; height:17px; }
+  .feature h3{ font-size:14.5px; font-weight:600; font-family:'Inter',sans-serif; margin-bottom:5px; }
+  .feature p{ font-size:12.5px; color:var(--stone); line-height:1.55; }
+
+  /* ---------------- Chat (Assistant section) ---------------- */
+  .status-strip{ font-size:11.5px; color:var(--stone-light); padding:0 0 18px; letter-spacing:0.2px; }
+  .status-strip .dot{ display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--seal); margin-right:6px; vertical-align:middle; }
+  .chat{ display:flex; flex-direction:column; gap:18px; margin-bottom:20px; }
+  .row{ display:flex; gap:10px; }
+  .row.user{ justify-content:flex-end; }
+  .avatar{
+    width:30px; height:30px; border-radius:50%; background:var(--seal-light); color:var(--seal);
+    display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-size:13px;
+    font-weight:600; flex-shrink:0; margin-top:2px;
+  }
+  .bubble{ max-width:78%; padding:13px 16px; border-radius:12px; font-size:14.5px; line-height:1.65; }
+  .row.assistant .bubble{ background:var(--paper-raised); border:1px solid var(--border); border-top-left-radius:3px; color:var(--ink-soft); }
+  .row.user .bubble{ background:var(--ink); color:var(--paper); border-top-right-radius:3px; }
+  .bubble p + p{ margin-top:10px; }
+  .bubble ul{ margin:8px 0 4px 18px; }
+  .bubble li{ margin-bottom:4px; }
+  .citations{ display:flex; flex-wrap:wrap; gap:7px; margin-top:11px; padding-top:11px; border-top:1px dashed var(--border); }
+  .stamp{
+    display:inline-flex; align-items:center; gap:5px; font-family:'IBM Plex Mono',monospace; font-size:11px;
+    font-weight:500; color:var(--seal); background:var(--seal-light); border:1px solid #BFDACB; border-radius:3px; padding:4px 8px;
+  }
+  .stamp svg{ width:10px; height:10px; flex-shrink:0; }
+  .stamp.lab{ color:var(--marigold); background:var(--marigold-light); border-color:#EFD79E; }
+  .typing .bubble{ display:flex; gap:4px; align-items:center; padding:15px 16px; }
+  .typing span{ width:6px; height:6px; border-radius:50%; background:var(--stone-light); animation:blink 1.2s infinite ease-in-out; }
+  .typing span:nth-child(2){ animation-delay:0.2s; }
+  .typing span:nth-child(3){ animation-delay:0.4s; }
+  @keyframes blink{ 0%,80%,100%{opacity:0.25; transform:translateY(0);} 40%{opacity:1; transform:translateY(-2px);} }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+  .chip{
+    font-size:13px; color:var(--ink-soft); background:var(--paper-raised); border:1px solid var(--border-strong);
+    border-radius:8px; padding:9px 13px; text-align:left; line-height:1.4; transition:border-color 0.15s;
+  }
+  .chip:hover{ border-color:var(--seal); color:var(--seal); }
+  .chip svg{ width:13px; height:13px; margin-right:6px; vertical-align:-2px; }
+  .inputbar{
+    display:flex; gap:8px; border:1px solid var(--border-strong); background:var(--paper-raised);
+    border-radius:10px; padding:6px 6px 6px 16px; align-items:center;
+  }
+  .inputbar input{ flex:1; border:none; outline:none; background:transparent; font-size:14.5px; color:var(--ink); padding:10px 0; font-family:'Inter',sans-serif; }
+  .inputbar input::placeholder{ color:var(--stone-light); }
+  .send-btn{ background:var(--ink); color:var(--paper); border:none; border-radius:7px; width:38px; height:38px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .send-btn:active{ transform:scale(0.95); }
+  .send-btn svg{ width:16px; height:16px; }
+
+  /* ---------------- Find Standard ---------------- */
+  .cat-chips{ display:flex; flex-wrap:wrap; gap:8px; margin:20px 0 28px; }
+  .cat-chip{
+    font-size:13px; font-weight:500; padding:9px 15px; border-radius:20px; border:1px solid var(--border-strong);
+    background:var(--paper-raised); color:var(--ink-soft);
+  }
+  .cat-chip.active{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  .searchbar{
+    display:flex; gap:8px; border:1px solid var(--border-strong); background:var(--paper-raised);
+    border-radius:10px; padding:6px 6px 6px 16px; align-items:center; margin-bottom:8px;
+  }
+  .searchbar input{ flex:1; border:none; outline:none; background:transparent; font-size:14.5px; padding:10px 0; font-family:'Inter',sans-serif; }
+  .std-results{ display:flex; flex-direction:column; gap:12px; margin-top:20px; }
+  .std-card{ background:var(--paper-raised); border:1px solid var(--border); border-radius:12px; padding:18px 20px; }
+  .std-card-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:8px; }
+  .std-code{ font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--seal); font-weight:500; }
+  .std-badge{ font-size:10.5px; font-weight:600; letter-spacing:0.3px; padding:4px 9px; border-radius:20px; text-transform:uppercase; }
+  .std-badge.mandatory{ background:var(--marigold-light); color:#8A5C02; }
+  .std-badge.voluntary{ background:var(--seal-light); color:var(--seal); }
+  .std-card h3{ font-family:'Inter',sans-serif; font-size:15px; font-weight:600; margin-bottom:6px; }
+  .std-card p{ font-size:13px; color:var(--stone); line-height:1.6; }
+  .empty-state{ text-align:center; padding:50px 20px; color:var(--stone); }
+  .empty-state svg{ width:32px; height:32px; margin-bottom:12px; color:var(--stone-light); }
+  .empty-state p{ font-size:13.5px; }
+
+  /* ---------------- Live Standards Search ---------------- */
+  .std-searchbar{ margin-bottom:8px; }
+  .std-search-icon{ width:18px; height:18px; color:var(--stone-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .std-search-icon svg{ width:17px; height:17px; }
+  .std-search-btn{ border:none; background:var(--bis-blue); color:#fff; border-radius:8px; padding:10px 16px; font:600 12px 'Inter',sans-serif; cursor:pointer; }
+  .std-search-btn:hover{ background:var(--bis-blue-dark); }
+  .std-search-hint{ display:flex; gap:7px; align-items:center; color:var(--stone-light); font-size:11px; margin:8px 2px 20px; }
+  .std-result-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:15px; margin-top:4px; }
+  .std-result-title{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.7px; color:var(--ink-soft); }
+  .std-result-sub{ font-size:12px; color:var(--stone); margin-top:4px; }
+  .std-api-status{ display:flex; align-items:center; gap:7px; font-size:10.5px; font-weight:600; color:var(--seal); background:var(--seal-light); border:1px solid #BFDACB; padding:6px 9px; border-radius:20px; white-space:nowrap; }
+  .api-dot{ width:6px; height:6px; border-radius:50%; background:var(--seal); }
+  .std-api-status.offline{ color:var(--danger); background:var(--danger-light); border-color:#F4C6C2; }
+  .std-api-status.offline .api-dot{ background:var(--danger); }
+  .std-card{ transition:transform .15s, box-shadow .15s, border-color .15s; }
+  .std-card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-sm); border-color:#C7D8EE; }
+  .std-card-meta{ display:flex; flex-wrap:wrap; gap:7px; margin-top:13px; }
+  .std-meta-pill{ font-size:10.5px; padding:5px 8px; border-radius:6px; background:var(--paper); color:var(--ink-soft); border:1px solid var(--border); }
+  .std-meta-pill.verified{ color:var(--seal); background:var(--seal-light); border-color:#BFDACB; }
+  .std-meta-pill.pending{ color:#8A5C02; background:var(--marigold-light); border-color:#EBD6A7; }
+  .match-box{ display:flex; align-items:center; gap:7px; margin-top:13px; font-size:10.5px; color:var(--stone); }
+  .match-track{ width:90px; height:5px; background:var(--border); border-radius:5px; overflow:hidden; }
+  .match-fill{ height:100%; background:var(--seal); border-radius:5px; }
+  .std-source{ margin-top:12px; font-size:10.5px; color:var(--stone-light); }
+  .std-source a{ color:var(--bis-blue); text-decoration:none; }
+  .std-loading{ display:flex; align-items:center; justify-content:center; gap:9px; padding:42px 20px; color:var(--stone); font-size:13px; }
+  .spinner{ width:18px; height:18px; border:2px solid var(--border); border-top-color:var(--bis-blue); border-radius:50%; animation:spin .7s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .std-empty-title{ font-size:14px; font-weight:600; color:var(--ink-soft); margin-bottom:5px; }
+  .std-empty-text{ max-width:500px; margin:0 auto; line-height:1.6; }
+  @media(max-width:650px){
+    .std-result-head{ align-items:flex-start; flex-direction:column; }
+    .std-searchbar{ flex-wrap:wrap; }
+    .std-searchbar input{ min-width:0; }
+    .std-search-btn{ width:100%; }
+    .std-search-hint{ flex-wrap:wrap; }
+  }
+
+  /* ---------------- Certification journey ---------------- */
+  .steps{ display:flex; flex-direction:column; margin-top:24px; }
+  .step{ display:flex; gap:16px; padding-bottom:26px; position:relative; cursor:pointer; }
+  .step:last-child .step-line{ display:none; }
+  .step-marker{ display:flex; flex-direction:column; align-items:center; flex-shrink:0; }
+  .step-num{
+    width:32px; height:32px; border-radius:50%; border:2px solid var(--border-strong); background:var(--paper-raised);
+    display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:13px;
+    font-weight:500; color:var(--stone); transition:all 0.15s; flex-shrink:0;
+  }
+  .step.done .step-num{ background:var(--seal); border-color:var(--seal); color:#fff; }
+  .step.done .step-num svg{ width:14px; height:14px; }
+  .step-line{ width:2px; flex:1; background:var(--border-strong); margin-top:4px; min-height:18px; }
+  .step.done .step-line{ background:var(--seal); }
+  .step-body{ flex:1; background:var(--paper-raised); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+  .step-body h3{ font-family:'Inter',sans-serif; font-size:14.5px; font-weight:600; margin-bottom:5px; }
+  .step-body p{ font-size:13px; color:var(--stone); line-height:1.6; }
+  .step-toggle{
+    margin-top:10px; font-size:12px; font-weight:600; color:var(--seal); background:var(--seal-light);
+    border:1px solid #BFDACB; padding:6px 12px; border-radius:6px;
+  }
+  .step.done .step-toggle{ background:var(--paper-raised); color:var(--stone); border-color:var(--border-strong); }
+  .progress-bar{ height:6px; background:var(--border); border-radius:4px; overflow:hidden; margin:20px 0 4px; }
+  .progress-fill{ height:100%; background:var(--seal); transition:width 0.3s; }
+  .progress-label{ font-size:12px; color:var(--stone); }
+
+  /* ---------------- Hallmark verifier ---------------- */
+  .verify-box{ background:var(--paper-raised); border:1px solid var(--border); border-radius:12px; padding:24px; max-width:480px; }
+  .verify-box label{ font-size:12.5px; font-weight:600; color:var(--stone); display:block; margin-bottom:8px; }
+  .verify-input-row{ display:flex; gap:8px; }
+  .verify-input-row input{
+    flex:1; border:1px solid var(--border-strong); border-radius:8px; padding:11px 13px; font-size:14px;
+    font-family:'IBM Plex Mono',monospace; outline:none; text-transform:uppercase;
+  }
+  .verify-input-row input:focus{ border-color:var(--seal); }
+  .verify-btn{ background:var(--ink); color:var(--paper); border:none; border-radius:8px; padding:0 18px; font-size:13.5px; font-weight:600; }
+  .verify-hint{ font-size:11.5px; color:var(--stone-light); margin-top:8px; }
+  .verify-result{ margin-top:20px; border-radius:10px; padding:16px 18px; border:1px solid; }
+  .verify-result.ok{ background:var(--seal-light); border-color:#BFDACB; }
+  .verify-result.bad{ background:var(--danger-light); border-color:#EAC3B7; }
+  .verify-result-head{ display:flex; align-items:center; gap:8px; font-weight:600; font-size:14px; margin-bottom:10px; }
+  .verify-result.ok .verify-result-head{ color:var(--seal); }
+  .verify-result.bad .verify-result-head{ color:var(--danger); }
+  .verify-result-head svg{ width:17px; height:17px; }
+  .verify-row{ display:flex; justify-content:space-between; font-size:13px; padding:5px 0; color:var(--ink-soft); }
+  .verify-row span:first-child{ color:var(--stone); }
+
+  /* ---------------- Labs ---------------- */
+  .lab-filters{ display:flex; gap:10px; margin:20px 0 22px; flex-wrap:wrap; }
+  .lab-filters select{
+    border:1px solid var(--border-strong); border-radius:8px; padding:9px 12px; font-size:13px;
+    background:var(--paper-raised); color:var(--ink); font-family:'Inter',sans-serif;
+  }
+  .lab-list{ display:flex; flex-direction:column; gap:10px; }
+  .lab-card{ display:flex; justify-content:space-between; align-items:center; gap:12px; background:var(--paper-raised); border:1px solid var(--border); border-radius:10px; padding:14px 18px; }
+  .lab-card h3{ font-family:'Inter',sans-serif; font-size:14.5px; font-weight:600; }
+  .lab-card .meta{ font-size:12.5px; color:var(--stone); margin-top:3px; }
+  .lab-tag{ font-size:11px; font-weight:600; color:var(--marigold); background:var(--marigold-light); padding:4px 10px; border-radius:20px; white-space:nowrap; }
+
+  footer{ border-top:1px solid var(--border); padding:26px 0; text-align:center; }
+  footer p{ font-size:11.5px; color:var(--stone-light); line-height:1.6; }
+
+  @media (max-width:900px){
+    .hero-grid{ grid-template-columns:1fr; gap:40px; }
+    .hero h1{ font-size:42px; }
+    .hero-ai-card{ max-width:620px; }
+    .feature-grid{ grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width:720px){
+    .wrap{ padding:0 18px; }
+    .feature-grid{ grid-template-columns:1fr; }
+    .stats-row{ grid-template-columns:repeat(2,1fr); }
+    .stat{ border-bottom:1px solid var(--border); }
+    .hero{ padding:48px 0 40px; }
+    .hero h1{ font-size:36px; letter-spacing:-1px; }
+    .hero p.lead{ font-size:15px; }
+  }
+  @media (max-width:480px){
+    nav{ order:3; width:100%; overflow-x:auto; padding-top:6px; }
+    .brand-logo{ width:135px; }
+    .hero h1{ font-size:32px; }
+    .hero-trust{ gap:9px; flex-direction:column; }
+    .hero-ctas{ flex-direction:column; }
+    .btn{ justify-content:center; }
+    .bubble{ max-width:88%; }
+  }
+.citation-section {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.citation-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.citation-card {
+    padding: 10px 12px;
+    margin-top: 8px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.citation-main {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.verified-badge {
+    font-size: 11px;
+    padding: 3px 7px;
+    border-radius: 20px;
+    background: #dcfce7;
+    color: #166534;
+}
+
+.citation-category {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.source-link {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+/* ---------------- Enhanced Chat UI & Extension Section ---------------- */
+.chat-controls { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.clear-chat-btn {
+  background:none; border:1px solid var(--border-strong); border-radius:6px;
+  font-size:11.5px; font-weight:600; color:var(--stone); padding:5px 10px;
+  cursor:pointer; display:flex; align-items:center; gap:5px; transition:all 0.15s ease;
+}
+.clear-chat-btn:hover { background:var(--danger-light); color:var(--danger); border-color:#F4C6C2; }
+
+.bubble { position:relative; }
+.bubble h3, .bubble h4 { margin:10px 0 6px 0; color:var(--ink); font-family:'Inter',sans-serif; font-size:14.5px; font-weight:600; }
+.bubble h3:first-child, .bubble h4:first-child { margin-top:0; }
+.bubble strong { color:var(--ink); font-weight:600; }
+.bubble code { background:rgba(0,0,0,0.05); padding:2px 5px; border-radius:4px; font-family:'IBM Plex Mono',monospace; font-size:12.5px; }
+
+.bubble-footer { display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:8px; border-top:1px dashed var(--border); font-size:11px; }
+.copy-btn {
+  background:none; border:none; color:var(--stone); cursor:pointer; display:inline-flex;
+  align-items:center; gap:4px; font-size:11px; font-weight:500; padding:3px 6px; border-radius:4px; transition:background 0.15s;
+}
+.copy-btn:hover { background:var(--paper); color:var(--bis-blue); }
+
+.followup-box { margin-top:12px; padding:10px 14px; background:var(--bis-blue-light); border-radius:8px; border:1px solid #D5E5FF; }
+.followup-title { font-size:11px; font-weight:700; color:var(--bis-blue); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+.followup-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.followup-chip {
+  background:var(--paper-raised); border:1px solid #CBD5E1; color:var(--bis-blue-dark);
+  font-size:12px; font-weight:500; border-radius:16px; padding:5px 12px; cursor:pointer;
+  transition:all 0.15s ease; text-align:left;
+}
+.followup-chip:hover { background:var(--bis-blue); color:#fff; border-color:var(--bis-blue); transform:translateY(-1px); }
+
+/* Extension Section Styles */
+.ext-card {
+  background:var(--paper-raised); border:1px solid var(--border); border-radius:16px;
+  padding:36px; box-shadow:var(--shadow-sm); margin-top:20px;
+}
+.ext-grid { display:grid; grid-template-columns:1.2fr 0.8fr; gap:40px; align-items:center; }
+.ext-features { display:grid; grid-template-columns:repeat(2, 1fr); gap:16px; margin:24px 0; }
+.ext-feat-item {
+  background:var(--paper); border:1px solid var(--border); border-radius:10px;
+  padding:14px; display:flex; gap:12px; align-items:flex-start;
+}
+.ext-feat-icon {
+  width:32px; height:32px; border-radius:8px; background:var(--bis-blue-light);
+  color:var(--bis-blue); display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.ext-feat-item h4 { font-size:13px; font-weight:600; margin-bottom:3px; color:var(--ink); }
+.ext-feat-item p { font-size:11.5px; color:var(--stone); line-height:1.45; }
+
+.ext-guide-steps { display:flex; flex-direction:column; gap:12px; margin-top:16px; }
+.ext-step { display:flex; gap:14px; align-items:flex-start; background:var(--paper); padding:12px 16px; border-radius:10px; border:1px solid var(--border); }
+.ext-step-badge {
+  width:24px; height:24px; border-radius:50%; background:var(--bis-blue); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0;
+}
+.ext-step-content h4 { font-size:13px; font-weight:600; color:var(--ink); margin-bottom:2px; }
+.ext-step-content p { font-size:12px; color:var(--stone); line-height:1.4; }
+.ext-step-content code { background:#E2E8F0; padding:2px 6px; border-radius:4px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; }
+
+.ext-preview-box {
+  background:linear-gradient(135deg, #0B1F3A, #1357A6); border-radius:14px; padding:24px; color:#fff;
+  box-shadow:var(--shadow-lg); position:relative; overflow:hidden;
+}
+.ext-preview-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.15); }
+.ext-preview-brand { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; }
+.ext-preview-chat { background:rgba(255,255,255,0.08); border-radius:10px; padding:14px; font-size:12px; line-height:1.55; }
+.ext-preview-tag { display:inline-block; font-size:10px; background:var(--saffron); color:#fff; font-weight:700; padding:2px 8px; border-radius:10px; margin-bottom:8px; }
+@media (max-width: 800px) {
+  .ext-grid { grid-template-columns:1fr; }
+  .ext-features { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <div class="brand" onclick="goTo('home')">
+      <img src="assets/bis-sahayak-logo.png" alt="BIS Sahayak" class="brand-logo">
+    </div>
+    <nav>
+      <button data-nav="home" data-i18n="nav.home">Home</button>
+      <button data-nav="assistant" data-i18n="nav.assistant">AI Assistant</button>
+      <button data-nav="standards" data-i18n="nav.standards">Standards</button>
+      <button data-nav="certify" data-i18n="nav.certify">Certification</button>
+      <button data-nav="hallmark" data-i18n="nav.hallmark">Hallmarking</button>
+      <button data-nav="labs" data-i18n="nav.labs">Testing labs</button>
+      <button data-nav="extension" data-i18n="nav.extension">Extension</button>
+    </nav>
+    <div class="lang-toggle">
+      <button id="btn-en" class="active">EN</button>
+      <button id="btn-hi">हिं</button>
+      <button id="btn-gu">ગુ</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ===================== HOME ===================== -->
+  <section id="sec-home" class="active">
+    <div class="hero">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <div class="eyebrow"><span class="eyebrow-dot"></span><span data-i18n="hero.eyebrow_badge">AI-POWERED BIS INTELLIGENCE</span></div>
+          <h1 data-i18n="hero.title">Your intelligent guide to <span class="hero-highlight">Indian Standards.</span></h1>
+          <p class="lead" data-i18n="hero.lead">Ask questions, discover applicable standards, understand certification requirements, and navigate BIS services — all from one intelligent interface.</p>
+          <div class="hero-trust">
+            <span data-i18n="hero.trust1">✓ Evidence-grounded</span>
+            <span data-i18n="hero.trust2">✓ Source-backed</span>
+            <span data-i18n="hero.trust3">✓ Built for India</span>
+          </div>
+          <div class="hero-ctas">
+            <button class="btn btn-primary" onclick="goTo('assistant')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              <span data-i18n="hero.cta1">Ask BIS Sahayak</span>
+            </button>
+            <button class="btn btn-secondary" onclick="goTo('standards')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <span data-i18n="hero.cta2">Explore Standards</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-ai-card">
+          <div class="ai-card-top">
+            <div class="ai-status"><span class="ai-status-dot"></span><span data-i18n="ai.title">BIS Sahayak AI</span></div>
+            <span class="ai-badge" data-i18n="ai.badge">BETA</span>
+          </div>
+          <div class="ai-card-body">
+            <p class="ai-label" data-i18n="ai.label">WHAT CAN I HELP WITH?</p>
+            <h3 data-i18n="ai.h3">Find the right standard for your product.</h3>
+            <div class="ai-example">
+              <div class="ai-example-icon">✦</div>
+              <div>
+                <span class="ai-example-label" data-i18n="ai.ex_lbl">Example query</span>
+                <p data-i18n="ai.ex_q">“Which BIS standard applies to my product?”</p>
+              </div>
+            </div>
+            <div class="ai-capabilities">
+              <div data-i18n="ai.cap1">✓ Standards</div>
+              <div data-i18n="ai.cap2">✓ Certification</div>
+              <div data-i18n="ai.cap3">✓ Testing</div>
+              <div data-i18n="ai.cap4">✓ Hallmarking</div>
+            </div>
+          </div>
+          <div class="ai-card-footer"><span data-i18n="ai.footer">Powered by BIS knowledge</span><span>→</span></div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat"><div class="num">6</div><div class="lbl" data-i18n="stat1">BIS service areas</div></div>
+        <div class="stat"><div class="num">38+</div><div class="lbl" data-i18n="stat2">Knowledge records</div></div>
+        <div class="stat"><div class="num">AI</div><div class="lbl" data-i18n="stat3">Powered assistance</div></div>
+        <div class="stat"><div class="num">3</div><div class="lbl" data-i18n="stat4">Languages supported</div></div>
+      </div>
+      <p class="hero-note" data-i18n="hero.note">Prototype knowledge base · Responses should be verified against official BIS sources before regulatory or certification decisions.</p>
+    </div>
+
+    <div class="section-head">
+      <h2 data-i18n="feat.head">What it can do</h2>
+      <p data-i18n="feat.sub">Six BIS services in one conversational interface, each answer traceable back to a document.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature" onclick="goTo('assistant')">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
+        <h3 data-i18n="feat1.h">Ask in plain language</h3>
+        <p data-i18n="feat1.p">Natural-language Q&amp;A on any Indian Standard, with citations to the exact clause.</p>
+      </div>
+      <div class="feature" onclick="goTo('standards')">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
+        <h3 data-i18n="feat2.h">Standard recommendation</h3>
+        <p data-i18n="feat2.p">Describe a product, get the applicable IS code and whether certification is mandatory.</p>
+      </div>
+      <div class="feature" onclick="goTo('certify')">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></div>
+        <h3 data-i18n="feat3.h">Certification journey</h3>
+        <p data-i18n="feat3.p">A step-by-step walkthrough of the ISI licensing process, trackable to completion.</p>
+      </div>
+      <div class="feature" onclick="goTo('hallmark')">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.5 5.5 21l2-7.5L2 9h7z"></path></svg></div>
+        <h3 data-i18n="feat4.h">Hallmark information</h3>
+        <p data-i18n="feat4.p">Understand hallmarking, purity marks, HUIDs and consumer verification guidance.</p>
+      </div>
+      <div class="feature" onclick="goTo('labs')">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2.2h12.4a1.5 1.5 0 0 0 1.3-2.2L14 9V3"></path></svg></div>
+        <h3 data-i18n="feat5.h">Testing lab finder</h3>
+        <p data-i18n="feat5.p">Locate BIS-recognised labs by product category and state.</p>
+      </div>
+      <div class="feature" onclick="goTo('assistant')">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 6 6-6"></path></svg></div>
+        <h3 data-i18n="feat6.h">Multilingual Support</h3>
+        <p data-i18n="feat6.p">Ask and receive answers in English, Hindi, or Gujarati — built for citizens, not just engineers.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ASSISTANT ===================== -->
+  <section id="sec-assistant">
+    <div class="section-head">
+      <h2 data-i18n="asst.head">Ask the assistant</h2>
+    </div>
+    <div class="chat-controls">
+      <div class="status-strip" style="padding:0;"><span class="dot"></span><span data-i18n="asst.status">Connected to BIS Intelligence · Multilingual RAG · Context-Aware</span></div>
+      <button class="clear-chat-btn" id="clear-chat" title="Start a new conversation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        <span data-i18n="chat.clear">Clear Conversation</span>
+      </button>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="chat" id="chat"></div>
+    <div class="inputbar">
+      <input id="input" type="text" placeholder="Ask about a standard, certification, or product…" autocomplete="off" />
+      <button class="send-btn" id="send" aria-label="Send">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===================== FIND STANDARD ===================== -->
+  <section id="sec-standards">
+    <div class="section-head">
+      <h2 data-i18n="std.head">Find a standard</h2>
+      <p data-i18n="std.sub">Search by product, or browse a category, to see which Indian Standard applies.</p>
+    </div>
+
+    <div class="searchbar std-searchbar">
+      <span class="std-search-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </span>
+      <input id="std-search" type="text" placeholder="Try “LED bulb”, “gold jewellery”, “steel bars”…" />
+      <button class="std-search-btn" id="std-search-btn" data-i18n="std.btn_search">Search</button>
+    </div>
+
+    <div class="std-search-hint">
+      <span data-i18n="std.hint1">AI-assisted product-to-standard matching</span>
+      <span>•</span>
+      <span data-i18n="std.hint2">Source-backed prototype results</span>
+    </div>
+
+    <div class="cat-chips" id="cat-chips"></div>
+
+    <div class="std-result-head">
+      <div>
+        <div class="std-result-title" data-i18n="std.res_title">Recommended standards</div>
+        <div class="std-result-sub" id="std-result-sub" data-i18n="std.res_sub">Enter a product or choose a category to begin.</div>
+      </div>
+      <div class="std-api-status" id="std-api-status">
+        <span class="api-dot"></span> <span data-i18n="std.api_status">Backend connected</span>
+      </div>
+    </div>
+
+    <div id="std-results" class="std-results"></div>
+  </section>
+
+  <!-- ===================== CERTIFICATION ===================== -->
+  <section id="sec-certify">
+    <div class="section-head">
+      <h2 data-i18n="cert.head">Certification journey</h2>
+      <p data-i18n="cert.sub">The ISI mark licensing process, step by step. Tap a step to mark it done and track progress.</p>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%;"></div></div>
+    <div class="progress-label" id="progress-label">0 of 5 steps completed</div>
+    <div class="steps" id="steps"></div>
+  </section>
+
+  <!-- ===================== HALLMARK ===================== -->
+  <section id="sec-hallmark">
+    <div class="section-head">
+      <h2 data-i18n="hm.head">Verify a hallmark</h2>
+      <p data-i18n="hm.sub">Enter the HUID (Hallmark Unique ID) printed on the jewellery to check it against records.</p>
+    </div>
+    <div class="verify-box">
+      <label data-i18n="hm.label">HUID number</label>
+      <div class="verify-input-row">
+        <input id="huid-input" type="text" maxlength="6" placeholder="e.g. AZ4R2K" />
+        <button class="verify-btn" id="huid-btn" data-i18n="hm.btn">Verify</button>
+      </div>
+      <p class="verify-hint" data-i18n="hm.hint">Demo accepts sample codes AZ4R2K and K9J2QX — any other input returns "not found".</p>
+      <div id="huid-result"></div>
+    </div>
+  </section>
+
+  <!-- ===================== LABS ===================== -->
+  <section id="sec-labs">
+    <div class="section-head">
+      <h2 data-i18n="lab.head">Testing labs</h2>
+      <p data-i18n="lab.sub">BIS-recognised laboratories in the demo dataset, filterable by category and state.</p>
+    </div>
+    <div class="lab-filters">
+      <select id="lab-cat-filter"></select>
+      <select id="lab-state-filter"></select>
+    </div>
+    <div class="lab-list" id="lab-list"></div>
+  </section>
+
+  <!-- ===================== CHROME EXTENSION ===================== -->
+  <section id="sec-extension">
+    <div class="section-head">
+      <h2 data-i18n="ext.head">Take BIS Sahayak Anywhere</h2>
+      <p data-i18n="ext.sub">Get BIS Sahayak directly in your browser with our Chrome Extension Copilot.</p>
+    </div>
+
+    <div class="ext-card">
+      <div class="ext-grid">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span><span data-i18n="ext.eyebrow">BROWSER COPILOT (MANIFEST V3)</span></div>
+          <h2 style="font-size:32px; margin-bottom:12px; line-height:1.2;" data-i18n="ext.title">Intelligent BIS guidance right on any webpage.</h2>
+          <p style="font-size:14.5px; color:var(--stone); line-height:1.6;" data-i18n="ext.lead">
+            Whether you are reading about consumer electronics, browsing an e-commerce catalog, or reviewing industrial product specifications, BIS Sahayak Copilot is one click away.
+          </p>
+
+          <div class="ext-features">
+            <div class="ext-feat-item">
+              <div class="ext-feat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              </div>
+              <div>
+                <h4 data-i18n="ext.f1_h">In-browser Q&amp;A</h4>
+                <p data-i18n="ext.f1_p">Ask any BIS question without leaving the page you are on.</p>
+              </div>
+            </div>
+
+            <div class="ext-feat-item">
+              <div class="ext-feat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              </div>
+              <div>
+                <h4 data-i18n="ext.f2_h">Page Context Reading</h4>
+                <p data-i18n="ext.f2_p">Automatically reads active tab content to evaluate BIS compliance.</p>
+              </div>
+            </div>
+
+            <div class="ext-feat-item">
+              <div class="ext-feat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 8l6 6 6-6"></path></svg>
+              </div>
+              <div>
+                <h4 data-i18n="ext.f3_h">Trilingual Support</h4>
+                <p data-i18n="ext.f3_p">Instant toggle across English, Hindi, and Gujarati.</p>
+              </div>
+            </div>
+
+            <div class="ext-feat-item">
+              <div class="ext-feat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              </div>
+              <div>
+                <h4 data-i18n="ext.f4_h">Standards &amp; Labs</h4>
+                <p data-i18n="ext.f4_p">Quickly find mandatory standards and NABL testing labs.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:20px;">
+            <button class="btn btn-primary" onclick="alert('To load the extension in Chrome:\n1. Open chrome://extensions/\n2. Enable Developer mode\n3. Click \'Load unpacked\'\n4. Select the \'extension\' folder in this project directory!')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+              <span data-i18n="ext.btn_install">Load in Chrome (Developer Mode)</span>
+            </button>
+            <button class="btn btn-secondary" onclick="document.getElementById('ext-guide').scrollIntoView({behavior:'smooth'})">
+              <span data-i18n="ext.btn_guide">Installation Guide ↓</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="ext-preview-box">
+          <div class="ext-preview-header">
+            <div class="ext-preview-brand">
+              <span style="font-size:16px;">🇮🇳</span>
+              <span data-i18n="ext.prev_brand">BIS Sahayak Copilot</span>
+            </div>
+            <span class="ext-preview-tag" data-i18n="ext.prev_tag">MV3 ACTIVE</span>
+          </div>
+          <div class="ext-preview-chat">
+            <div style="color:var(--saffron-light); font-size:10px; font-weight:700; margin-bottom:4px;" data-i18n="ext.prev_tab_label">ACTIVE TAB DETECTED</div>
+            <div style="color:#E2E8F0; font-size:11px; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.1);" data-i18n="ext.prev_tab_title">
+              📄 <em>"Smart Inverter LED Bulb 9W — Specifications"</em>
+            </div>
+            <div style="background:rgba(255,255,255,0.12); padding:10px; border-radius:8px; margin-bottom:8px;" data-i18n="ext.prev_user">
+              <strong>User:</strong> Does this LED bulb require mandatory BIS certification?
+            </div>
+            <div style="background:rgba(255,255,255,0.2); padding:10px; border-radius:8px;" data-i18n="ext.prev_asst">
+              <strong>BIS Sahayak:</strong> Yes. Self-ballasted LED lamps for general lighting fall under <strong>IS 16102 (Part 1 &amp; 2)</strong> and are covered under the <strong>Compulsory Registration Scheme (CRS)</strong>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step by step guide -->
+      <div id="ext-guide" style="margin-top:40px; padding-top:28px; border-top:1px solid var(--border);">
+        <h3 style="font-size:18px; margin-bottom:6px;" data-i18n="ext.guide_title">Step-by-Step Installation Guide</h3>
+        <p style="font-size:13px; color:var(--stone);" data-i18n="ext.guide_sub">Follow these simple steps to load the extension in Google Chrome, Brave, or Edge.</p>
+
+        <div class="ext-guide-steps">
+          <div class="ext-step">
+            <div class="ext-step-badge">1</div>
+            <div class="ext-step-content">
+              <h4 data-i18n="ext.g1_h">Open Chrome Extensions Manager</h4>
+              <p data-i18n="ext.g1_p">In Google Chrome, type <code>chrome://extensions/</code> in the address bar and press Enter.</p>
+            </div>
+          </div>
+
+          <div class="ext-step">
+            <div class="ext-step-badge">2</div>
+            <div class="ext-step-content">
+              <h4 data-i18n="ext.g2_h">Enable Developer Mode</h4>
+              <p data-i18n="ext.g2_p">Toggle the <strong>Developer mode</strong> switch located in the top-right corner of the Extensions page.</p>
+            </div>
+          </div>
+
+          <div class="ext-step">
+            <div class="ext-step-badge">3</div>
+            <div class="ext-step-content">
+              <h4 data-i18n="ext.g3_h">Click "Load unpacked"</h4>
+              <p data-i18n="ext.g3_p">Click the <strong>Load unpacked</strong> button on the top-left and select the <code>extension</code> folder from this project.</p>
+            </div>
+          </div>
+
+          <div class="ext-step">
+            <div class="ext-step-badge">4</div>
+            <div class="ext-step-content">
+              <h4 data-i18n="ext.g4_h">Pin &amp; Start Exploring</h4>
+              <p data-i18n="ext.g4_p">Click the puzzle icon on Chrome's toolbar and pin <strong>BIS Sahayak</strong> for 1-click intelligent assistance anywhere on the web!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <p data-i18n="footer">Prototype built for demonstration — Smart India Hackathon. All standards, labs, and HUID records shown are illustrative sample data, not live BIS records.</p>
+  </div>
+</footer>
+
+<script>
+/* ============ ICONS ============ */
+const checkSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+const flaskSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2.2h12.4a1.5 1.5 0 0 0 1.3-2.2L14 9V3"></path></svg>';
+const searchSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
+const xSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+
+/* ============ I18N (nav / hero / section headers / extension) ============ */
+const I18N = {
+  en: {
+    tagline:"AI for Indian Standards",
+    "nav.home":"Home","nav.assistant":"AI Assistant","nav.standards":"Standards","nav.certify":"Certification","nav.hallmark":"Hallmarking","nav.labs":"Testing Labs","nav.extension":"Chrome Extension",
+    "hero.eyebrow_badge":"AI-POWERED BIS INTELLIGENCE",
+    "hero.eyebrow":"Prototype · Dept. of Consumer Affairs",
+    "hero.title":"Your intelligent guide to <span class=\"hero-highlight\">Indian Standards.</span>",
+    "hero.lead":"Ask questions, discover applicable standards, understand certification requirements, and navigate BIS services — all from one intelligent interface.",
+    "hero.trust1":"✓ Evidence-grounded",
+    "hero.trust2":"✓ Source-backed",
+    "hero.trust3":"✓ Built for India",
+    "hero.cta1":"Ask BIS Sahayak",
+    "hero.cta2":"Explore Standards",
+    "ai.title":"BIS Sahayak AI",
+    "ai.badge":"BETA",
+    "ai.label":"WHAT CAN I HELP WITH?",
+    "ai.h3":"Find the right standard for your product.",
+    "ai.ex_lbl":"Example query",
+    "ai.ex_q":"“Which BIS standard applies to my product?”",
+    "ai.cap1":"✓ Standards",
+    "ai.cap2":"✓ Certification",
+    "ai.cap3":"✓ Testing",
+    "ai.cap4":"✓ Hallmarking",
+    "ai.footer":"Powered by BIS knowledge",
+    "stat1":"BIS service areas",
+    "stat2":"Knowledge records",
+    "stat3":"Powered assistance",
+    "stat4":"Languages supported",
+    "hero.note":"Prototype knowledge base · Responses should be verified against official BIS sources before regulatory or certification decisions.",
+    "feat.head":"What it can do","feat.sub":"Six BIS services in one conversational interface, each answer traceable back to a document.",
+    "feat1.h":"Ask in plain language","feat1.p":"Natural-language Q&A on any Indian Standard, with citations to the exact clause.",
+    "feat2.h":"Standard recommendation","feat2.p":"Describe a product, get the applicable IS code and whether certification is mandatory.",
+    "feat3.h":"Certification journey","feat3.p":"A step-by-step walkthrough of the ISI licensing process, trackable to completion.",
+    "feat4.h":"Hallmark information","feat4.p":"Understand hallmarking, purity marks, HUIDs and consumer verification guidance.",
+    "feat5.h":"Testing lab finder","feat5.p":"Locate BIS-recognised labs by product category and state.",
+    "feat6.h":"Multilingual Support","feat6.p":"Ask and receive answers in English, Hindi, or Gujarati — built for citizens, not just engineers.",
+    "asst.head":"Ask the assistant","asst.status":"Connected to BIS Intelligence · Multilingual RAG · Context-Aware",
+    "chat.clear":"Clear Conversation","chat.copy":"Copy","chat.copied":"Copied! ✓","chat.followup_title":"Suggested Follow-ups",
+    "std.head":"Find a standard","std.sub":"Search by product, or browse a category, to see which Indian Standard applies.",
+    "std.btn_search":"Search",
+    "std.hint1":"AI-assisted product-to-standard matching",
+    "std.hint2":"Source-backed prototype results",
+    "std.res_title":"Recommended standards",
+    "std.res_sub":"Enter a product or choose a category to begin.",
+    "std.api_status":"Backend connected",
+    "cert.head":"Certification journey","cert.sub":"The ISI mark licensing process, step by step. Tap a step to mark it done and track progress.",
+    "hm.head":"Verify a hallmark","hm.sub":"Enter the HUID (Hallmark Unique ID) printed on the jewellery to check it against records.",
+    "hm.label":"HUID number","hm.btn":"Verify","hm.hint":"Demo accepts sample codes AZ4R2K and K9J2QX — any other input returns \"not found\".",
+    "lab.head":"Testing labs","lab.sub":"BIS-recognised laboratories in the demo dataset, filterable by category and state.",
+    "ext.head":"Take BIS Sahayak Anywhere","ext.sub":"Get BIS Sahayak directly in your browser with our Chrome Extension Copilot.",
+    "ext.eyebrow":"BROWSER COPILOT (MANIFEST V3)",
+    "ext.title":"Intelligent BIS guidance right on any webpage.",
+    "ext.lead":"Whether you are reading about consumer electronics, browsing an e-commerce catalog, or reviewing industrial product specifications, BIS Sahayak Copilot is one click away.",
+    "ext.f1_h":"In-browser Q&A","ext.f1_p":"Ask any BIS question without leaving the page you are on.",
+    "ext.f2_h":"Page Context Reading","ext.f2_p":"Automatically reads active tab content to evaluate BIS compliance.",
+    "ext.f3_h":"Trilingual Support","ext.f3_p":"Instant toggle across English, Hindi, and Gujarati.",
+    "ext.f4_h":"Standards & Labs","ext.f4_p":"Quickly find mandatory standards and NABL testing labs.",
+    "ext.btn_install":"Load in Chrome (Developer Mode)","ext.btn_guide":"Installation Guide ↓",
+    "ext.prev_brand":"BIS Sahayak Copilot",
+    "ext.prev_tag":"MV3 ACTIVE",
+    "ext.prev_tab_label":"ACTIVE TAB DETECTED",
+    "ext.prev_tab_title":"📄 <em>\"Smart Inverter LED Bulb 9W — Specifications\"</em>",
+    "ext.prev_user":"<strong>User:</strong> Does this LED bulb require mandatory BIS certification?",
+    "ext.prev_asst":"<strong>BIS Sahayak:</strong> Yes. Self-ballasted LED lamps for general lighting fall under <strong>IS 16102 (Part 1 &amp; 2)</strong> and are covered under the <strong>Compulsory Registration Scheme (CRS)</strong>.",
+    "ext.guide_title":"Step-by-Step Installation Guide","ext.guide_sub":"Follow these simple steps to load the extension in Google Chrome, Brave, or Edge.",
+    "ext.g1_h":"Open Chrome Extensions Manager","ext.g1_p":"In Google Chrome, type chrome://extensions/ in the address bar and press Enter.",
+    "ext.g2_h":"Enable Developer Mode","ext.g2_p":"Toggle the Developer mode switch located in the top-right corner of the Extensions page.",
+    "ext.g3_h":"Click \"Load unpacked\"","ext.g3_p":"Click the Load unpacked button on the top-left and select the extension folder from this project.",
+    "ext.g4_h":"Pin & Start Exploring","ext.g4_p":"Click the puzzle icon on Chrome's toolbar and pin BIS Sahayak for 1-click intelligent assistance anywhere on the web!",
+    "footer":"Prototype built for demonstration — Smart India Hackathon. All standards, labs, and HUID records shown are illustrative sample data, not live BIS records."
+  },
+  hi: {
+    tagline:"भारतीय मानकों के लिए AI",
+    "nav.home":"होम","nav.assistant":"AI असिस्टेंट","nav.standards":"मानक","nav.certify":"प्रमाणन","nav.hallmark":"हॉलमार्क","nav.labs":"टेस्टिंग लैब","nav.extension":"Chrome एक्सटेंशन",
+    "hero.eyebrow_badge":"AI-संचालित BIS इंटेलिजेंस",
+    "hero.eyebrow":"प्रोटोटाइप · उपभोक्ता मामले मंत्रालय",
+    "hero.title":"<span class=\"hero-highlight\">भारतीय मानकों</span> के लिए आपका बुद्धिमान मार्गदर्शक।",
+    "hero.lead":"सवाल पूछें, लागू मानकों की खोज करें, प्रमाणन आवश्यकताओं को समझें और BIS सेवाओं का उपयोग करें — सब कुछ एक सहज इंटरफ़ेस से।",
+    "hero.trust1":"✓ साक्ष्य-आधारित",
+    "hero.trust2":"✓ स्रोत-सत्यापित",
+    "hero.trust3":"✓ भारत के लिए निर्मित",
+    "hero.cta1":"BIS सहायक से पूछें",
+    "hero.cta2":"मानक देखें",
+    "ai.title":"BIS सहायक AI",
+    "ai.badge":"बीटा",
+    "ai.label":"मैं क्या मदद कर सकता हूँ?",
+    "ai.h3":"अपने उत्पाद के लिए सही मानक खोजें।",
+    "ai.ex_lbl":"उदाहरण प्रश्न",
+    "ai.ex_q":"“मेरे उत्पाद पर कौन सा BIS मानक लागू होता है?”",
+    "ai.cap1":"✓ मानक",
+    "ai.cap2":"✓ प्रमाणन",
+    "ai.cap3":"✓ टेस्टिंग",
+    "ai.cap4":"✓ हॉलमार्किंग",
+    "ai.footer":"BIS ज्ञान द्वारा संचालित",
+    "stat1":"BIS सेवा क्षेत्र",
+    "stat2":"ज्ञान रिकॉर्ड्स",
+    "stat3":"AI सहायता",
+    "stat4":"समर्थित भाषाएं",
+    "hero.note":"प्रोटोटाइप ज्ञान आधार · नियामक या प्रमाणन निर्णयों से पहले उत्तरों को आधिकारिक BIS स्रोतों से सत्यापित किया जाना चाहिए।",
+    "feat.head":"यह क्या कर सकता है","feat.sub":"एक बातचीत इंटरफेस में छह BIS सेवाएं, हर उत्तर दस्तावेज़ तक ट्रेस करने योग्य।",
+    "feat1.h":"सरल भाषा में पूछें","feat1.p":"किसी भी भारतीय मानक पर प्राकृतिक भाषा में सवाल-जवाब, सटीक धारा के संदर्भ सहित।",
+    "feat2.h":"मानक अनुशंसा","feat2.p":"उत्पाद का वर्णन करें, लागू IS कोड पाएं और जानें कि प्रमाणन अनिवार्य है या नहीं।",
+    "feat3.h":"प्रमाणन यात्रा","feat3.p":"ISI लाइसेंसिंग प्रक्रिया का चरण-दर-चरण मार्गदर्शन, पूर्णता तक ट्रैक करने योग्य।",
+    "feat4.h":"हॉलमार्क जानकारी","feat4.p":"हॉलमार्किंग, शुद्धता चिह्न, HUID और उपभोक्ता सत्यापन मार्गदर्शन समझें।",
+    "feat5.h":"टेस्टिंग लैब खोजक","feat5.p":"उत्पाद श्रेणी और राज्य के अनुसार BIS-मान्यता प्राप्त लैब खोजें।",
+    "feat6.h":"बहुभाषी समर्थन","feat6.p":"अंग्रेज़ी, हिंदी या गुजराती में पूछें और उत्तर पाएं — नागरिकों और उपभोक्ताओं के लिए निर्मित।",
+    "asst.head":"असिस्टेंट से पूछें","asst.status":"BIS इंटेलिजेंस से कनेक्टेड · बहुभाषी RAG · संदर्भ-जागरूक",
+    "chat.clear":"बातचीत साफ़ करें","chat.copy":"कॉपी करें","chat.copied":"कॉपी हो गया! ✓","chat.followup_title":"सुझाए गए अनुवर्ती प्रश्न",
+    "std.head":"मानक खोजें","std.sub":"उत्पाद द्वारा खोजें, या किसी श्रेणी को ब्राउज़ करें, यह देखने के लिए कि कौन सा भारतीय मानक लागू होता है।",
+    "std.btn_search":"खोजें",
+    "std.hint1":"AI-सहायता प्राप्त उत्पाद-से-मानक मिलान",
+    "std.hint2":"स्रोत-समर्थित प्रोटोटाइप परिणाम",
+    "std.res_title":"अनुशंसित मानक",
+    "std.res_sub":"शुरू करने के लिए उत्पाद दर्ज करें या श्रेणी चुनें।",
+    "std.api_status":"बैकएंड कनेक्टेड",
+    "cert.head":"प्रमाणन यात्रा","cert.sub":"ISI मार्क लाइसेंसिंग प्रक्रिया, चरण दर चरण। किसी चरण को पूर्ण चिह्नित करने के लिए टैप करें।",
+    "hm.head":"हॉलमार्क सत्यापित करें","hm.sub":"आभूषण पर छपा HUID दर्ज करें और उसे रिकॉर्ड के विरुद्ध जांचें।",
+    "hm.label":"HUID नंबर","hm.btn":"सत्यापित करें","hm.hint":"डेमो में AZ4R2K और K9J2QX नमूना कोड स्वीकार होते हैं — अन्य इनपुट पर \"नहीं मिला\" दिखेगा।",
+    "lab.head":"टेस्टिंग लैब","lab.sub":"डेमो डेटा में BIS-मान्यता प्राप्त प्रयोगशालाएं, श्रेणी और राज्य के अनुसार फ़िल्टर करने योग्य।",
+    "ext.head":"BIS सहायक को कहीं भी ले जाएं","ext.sub":"हमारे Chrome एक्सटेंशन कोपायलट के साथ अपने ब्राउज़र में सीधे BIS सहायक प्राप्त करें।",
+    "ext.eyebrow":"ब्राउज़र कोपायलट (MANIFEST V3)",
+    "ext.title":"किसी भी वेबपेज पर तुरंत BIS मार्गदर्शन प्राप्त करें।","ext.lead":"चाहे आप इलेक्ट्रॉनिक्स पढ़ रहे हों, उत्पाद विनिर्देश देख रहे हों या ऑनलाइन खरीदारी कर रहे हों, BIS सहायक केवल एक क्लिक दूर है।",
+    "ext.f1_h":"ब्राउज़र में सीधे सवाल-जवाब","ext.f1_p":"वेबपेज छोड़े बिना किसी भी BIS मानक के बारे में पूछें।",
+    "ext.f2_h":"पृष्ठ संदर्भ विश्लेषण","ext.f2_p":"सक्रिय टैब की सामग्री को पढ़कर BIS अनुपालन का स्वतः विश्लेषण करता है।",
+    "ext.f3_h":"त्रिभाषी समर्थन","ext.f3_p":"अंग्रेज़ी, हिंदी और गुजराती के बीच तुरंत स्विच करें।",
+    "ext.f4_h":"मानक और लैब खोजक","ext.f4_p":"अनिवार्य मानक और NABL परीक्षण प्रयोगशालाएं तुरंत खोजें।",
+    "ext.btn_install":"Chrome में लोड करें (डेवलपर मोड)","ext.btn_guide":"इंस्टॉलेशन गाइड ↓",
+    "ext.prev_brand":"BIS सहायक कोपायलट",
+    "ext.prev_tag":"MV3 सक्रिय",
+    "ext.prev_tab_label":"सक्रिय टैब डिटेक्ट हुआ",
+    "ext.prev_tab_title":"📄 <em>\"Smart Inverter LED Bulb 9W — Specifications\"</em>",
+    "ext.prev_user":"<strong>उपयोगकर्ता:</strong> क्या इस LED बल्ब के लिए BIS प्रमाणन अनिवार्य है?",
+    "ext.prev_asst":"<strong>BIS सहायक:</strong> हाँ। सामान्य प्रकाश व्यवस्था के लिए LED बल्ब <strong>IS 16102 (भाग 1 और 2)</strong> के अंतर्गत आते हैं और <strong>अनिवार्य पंजीकरण योजना (CRS)</strong> के तहत अनिवार्य हैं।",
+    "ext.guide_title":"चरण-दर-चरण इंस्टॉलेशन गाइड","ext.guide_sub":"Google Chrome, Brave या Edge में एक्सटेंशन लोड करने के लिए इन चरणों का पालन करें।",
+    "ext.g1_h":"Chrome एक्सटेंशन मैनेजर खोलें","ext.g1_p":"Google Chrome के एड्रेस बार में chrome://extensions/ टाइप करें और Enter दबाएं।",
+    "ext.g2_h":"डेवलपर मोड सक्षम करें","ext.g2_p":"एक्सटेंशन पृष्ठ के शीर्ष-दाएं कोने में 'डेवलपर मोड' चालू करें।",
+    "ext.g3_h":"'Load unpacked' पर क्लिक करें","ext.g3_p":"शीर्ष-बाएं कोने में 'Load unpacked' पर क्लिक करें और इस प्रोजेक्ट का 'extension' फ़ोल्डर चुनें।",
+    "ext.g4_h":"पिन करें और शुरू करें","ext.g4_p":"टूलबार में पज़ल आइकन पर क्लिक करें और 1-क्लिक सहायता के लिए BIS सहायक को पिन करें!",
+    "footer":"प्रदर्शन हेतु बनाया गया प्रोटोटाइप — स्मार्ट इंडिया हैकाथॉन। दिखाए गए सभी मानक, लैब और HUID रिकॉर्ड उदाहरण डेटा हैं, लाइव BIS रिकॉर्ड नहीं।"
+  },
+  gu: {
+    tagline:"ભારતીય ધોરણો માટે AI",
+    "nav.home":"હોમ","nav.assistant":"AI સહાયક","nav.standards":"ધોરણો","nav.certify":"પ્રમાણન","nav.hallmark":"હોલમાર્ક","nav.labs":"ટેસ્ટિંગ લેબ્સ","nav.extension":"Chrome એક્સ્ટેન્શન",
+    "hero.eyebrow_badge":"AI-સંચાલિત BIS ઇન્ટેલિજન્સ",
+    "hero.eyebrow":"પ્રોટોટાઇપ · ગ્રાહક બાબતોનું મંત્રાલય",
+    "hero.title":"<span class=\"hero-highlight\">ભારતીય ધોરણો</span> માટે તમારો બુદ્ધિશાળી માર્ગદર્શક.",
+    "hero.lead":"પ્રશ્નો પૂછો, લાગુ ધોરણો શોધો, પ્રમાણન આવશ્યકતાઓ સમજો અને BIS સેવાઓનો ઉપયોગ કરો — બધું એક સરળ ઇન્ટરફેસથી.",
+    "hero.trust1":"✓ પુરાવા-આધારિત",
+    "hero.trust2":"✓ સ્રોત-ચકાસાયેલ",
+    "hero.trust3":"✓ ભારત માટે નિર્મિત",
+    "hero.cta1":"BIS સહાયકને પૂછો",
+    "hero.cta2":"ધોરણો જુઓ",
+    "ai.title":"BIS સહાયક AI",
+    "ai.badge":"બીટા",
+    "ai.label":"હું શું મદદ કરી શકું?",
+    "ai.h3":"તમારા ઉત્પાદન માટે યોગ્ય ધોરણ શોધો.",
+    "ai.ex_lbl":"ઉદાહરણ પ્રશ્ન",
+    "ai.ex_q":"“મારા ઉત્પાદન પર કયું BIS ધોરણ લાગુ પડે છે?”",
+    "ai.cap1":"✓ ધોરણો",
+    "ai.cap2":"✓ પ્રમાણન",
+    "ai.cap3":"✓ ટેસ્ટિંગ",
+    "ai.cap4":"✓ હોલમાર્કિંગ",
+    "ai.footer":"BIS જ્ઞાન દ્વારા સંચાલિત",
+    "stat1":"BIS સેવા ક્ષેત્રો",
+    "stat2":"જ્ઞાન રેકોર્ડ્સ",
+    "stat3":"AI સહાયતા",
+    "stat4":"સમર્થિત ભાષાઓ",
+    "hero.note":"પ્રોટોટાઇપ જ્ઞાન આધાર · કોઈપણ નિયમનકારી અથવા પ્રમાણન નિર્ણયો લેતા પહેલાં સત્તાવાર BIS સ્રોતોથી ચકાસણી કરવી જરૂરી છે.",
+    "feat.head":"આ શું કરી શકે છે","feat.sub":"એક વાતચીત ઇન્ટરફેસમાં છ BIS સેવાઓ, દરેક જવાબ દસ્તાવેજ સાથે જોડાયેલ છે.",
+    "feat1.h":"સરળ ભાષામાં પૂછો","feat1.p":"કોઈપણ ભારતીય ધોરણ પર કુદરતી ભાષામાં પ્રશ્નોત્તરી, ચોક્કસ કલમના સંદર્ભ સાથે.",
+    "feat2.h":"ધોરણ ભલામણ","feat2.p":"ઉત્પાદનનું વર્ણન કરો, લાગુ પડતો IS કોડ મેળવો અને પ્રમાણન ફરજિયાત છે કે નહીં તે જાણો.",
+    "feat3.h":"પ્રમાણન યાત્રા","feat3.p":"ISI લાયસન્સ પ્રક્રિયાનું તબક્કાવાર માર્ગદર્શન, પૂર્ણતા સુધી ટ્રેક કરવા યોગ્ય.",
+    "feat4.h":"હોલમાર્ક માહિતી","feat4.p":"હોલમાર્કિંગ, શુદ્ધતા ગુણ, HUID અને ગ્રાહક ચકાસણી માર્ગદર્શન સમજો.",
+    "feat5.h":"ટેસ્ટિંગ લેબ શોધક","feat5.p":"ઉત્પાદન શ્રેણી અને રાજ્ય અનુસાર BIS-માન્ય લેબ્સ શોધો.",
+    "feat6.h":"બહુભાષી સહાય","feat6.p":"અંગ્રેજી, હિન્દી કે ગુજરાતીમાં પૂછો અને ઉત્તર મેળવો — નાગરિકો અને ગ્રાહકો માટે નિર્મિત.",
+    "asst.head":"સહાયકને પૂછો","asst.status":"BIS ઇન્ટેલિજન્સ સાથે જોડાયેલ · ત્રિભાષી RAG · સંદર્ભ-જાગૃત",
+    "chat.clear":"વાતચીત સાફ કરો","chat.copy":"કૉપિ કરો","chat.copied":"કૉપિ થઈ ગયું! ✓","chat.followup_title":"સૂચવેલા અનુવર્તી પ્રશ્નો",
+    "std.head":"ધોરણ શોધો","std.sub":"ઉત્પાદન દ્વારા શોધો અથવા શ્રેણી બ્રાઉઝ કરો, કયું ભારતીય ધોરણ લાગુ પડે છે તે જાણવા.",
+    "std.btn_search":"શોધો",
+    "std.hint1":"AI-સહાયિત ઉત્પાદન-થી-ધોરણ મેળવણી",
+    "std.hint2":"સ્રોત-આધારિત પ્રોટોટાઇપ પરિણામો",
+    "std.res_title":"ભલામણ કરેલ ધોરણો",
+    "std.res_sub":"શરૂ કરવા માટે ઉત્પાદન દાખલ કરો અથવા કેટેગરી પસંદ કરો.",
+    "std.api_status":"બેકએન્ડ જોડાયેલ છે",
+    "cert.head":"પ્રમાણન યાત્રા","cert.sub":"ISI માર્ક લાયસન્સ પ્રક્રિયા, તબક્કાવાર. પ્રગતિ ટ્રેક કરવા માટે પગલાંને પૂર્ણ ચિહ્નિત કરો.",
+    "hm.head":"હોલમાર્ક ચકાસો","hm.sub":"રેકોર્ડ્સ સામે ચકાસવા માટે દાગીના પર છપાયેલ HUID નંબર દાખલ કરો.",
+    "hm.label":"HUID નંબર","hm.btn":"ચકાસો","hm.hint":"ડેમોમાં AZ4R2K અને K9J2QX નમૂના કોડ સ્વીકારવામાં આવે છે — અન્ય કોઈ ઇનપુટ પર \"ન મળ્યું\" દેખાશે.",
+    "lab.head":"ટેસ્ટિંગ લેબ્સ","lab.sub":"ડેમો ડેટામાં BIS-માન્ય પ્રયોગશાળાઓ, શ્રેણી અને રાજ્ય પ્રમાણે ફિલ્ટર કરવા યોગ્ય.",
+    "ext.head":"BIS સહાયકને ગમે ત્યાં લઈ જાઓ","ext.sub":"અમારા Chrome એક્સ્ટેન્શન કોપાયલટ સાથે તમારા બ્રાઉઝરમાં સીધો BIS સહાયક મેળવો.",
+    "ext.eyebrow":"બ્રાઉઝર કોપાયલટ (MANIFEST V3)",
+    "ext.title":"કોઈપણ વેબપેજ પર તુરંત BIS માર્ગદર્શન મેળવો.","ext.lead":"ઇલેક્ટ્રોનિક્સ વિશે વાંચતા હોવ, ઉત્પાદન વિગતો જોતા હોવ કે ખરીદી કરતા હોવ, BIS સહાયક માત્ર એક ક્લિક દૂર છે.",
+    "ext.f1_h":"બ્રાઉઝરમાં સીધા પ્રશ્નોત્તરી","ext.f1_p":"વેબપેજ છોડ્યા વિના કોઈપણ BIS ધોરણ વિશે પૂછો.",
+    "ext.f2_h":"પેજ સંદર્ભ વાંચન","ext.f2_p":"સક્રિય ટેબની સામગ્રી વાંચીને BIS સુસંગતતાનું આપમેળે મૂલ્યાંકન કરે છે.",
+    "ext.f3_h":"ત્રિભાષી સહાય","ext.f3_p":"અંગ્રેજી, હિન્દી અને ગુજરાતી વચ્ચે તુરંત સ્વિચ કરો.",
+    "ext.f4_h":"ધોરણો અને લેબ્સ","ext.f4_p":"ફરજિયાત ધોરણો અને NABL માન્ય લેબ્સ ઝડપથી શોધો.",
+    "ext.btn_install":"Chrome માં લોડ કરો (ડેવલપર મોડ)","ext.btn_guide":"ઇન્સ્ટોલેશન માર્ગદર્શિકા ↓",
+    "ext.prev_brand":"BIS સહાયક કોપાયલટ",
+    "ext.prev_tag":"MV3 સક્રિય",
+    "ext.prev_tab_label":"સક્રિય ટેબ મળી",
+    "ext.prev_tab_title":"📄 <em>\"Smart Inverter LED Bulb 9W — Specifications\"</em>",
+    "ext.prev_user":"<strong>વપરાશકર્તા:</strong> શું આ LED બલ્બ માટે BIS પ્રમાણપત્ર ફરજિયાત છે?",
+    "ext.prev_asst":"<strong>BIS સહાયક:</strong> હા. સામાન્ય લાઇટિંગ માટે LED બલ્બ <strong>IS 16102 (ભાગ 1 અને 2)</strong> હેઠળ આવે છે અને <strong>ફરજિયાત નોંધણી યોજના (CRS)</strong> હેઠળ ફરજિયાત છે.",
+    "ext.guide_title":"તબક્કાવાર ઇન્સ્ટોલેશન માર્ગદર્શિકા","ext.guide_sub":"Google Chrome, Brave અથવા Edge માં એક્સ્ટેન્શન લોડ કરવા માટે આ સરળ પગલાં અનુસરો.",
+    "ext.g1_h":"Chrome એક્સ્ટેન્શન્સ મેનેજર ખોલો","ext.g1_p":"Google Chrome ના એડ્રેસ બારમાં chrome://extensions/ લખો અને Enter દબાવો.",
+    "ext.g2_h":"ડેવલપર મોડ સક્ષમ કરો","ext.g2_p":"એક્સ્ટેન્શન્સ પેજ પર ઉપર જમણી બાજુએ 'Developer mode' સ્વિચ ચાલુ કરો.",
+    "ext.g3_h":"'Load unpacked' પર ક્લિક કરો","ext.g3_p":"ઉપર ડાબી બાજુ 'Load unpacked' બટન પર ક્લિક કરો અને પ્રોજેક્ટનું 'extension' ફોલ્ડર પસંદ કરો.",
+    "ext.g4_h":"પિન કરો અને શરૂ કરો","ext.g4_p":"ટૂલબારમાં પઝલ આઇકન પર ક્લિક કરો અને ૧-ક્લિક સહાય માટે BIS સહાયકને પિન કરો!",
+    "footer":"પ્રદર્શન હેતુ બનાવેલ પ્રોટોટાઇપ — સ્માર્ટ ઇન્ડિયા હેકાથોન. બતાવેલ તમામ રેકોર્ડ્સ ઉદાહરણ ડેટા છે, લાઇવ BIS રેકોર્ડ્સ નથી."
+  }
+};
+
+let lang = localStorage.getItem('bis_language') || 'en';
+let currentConversationId = '';
+
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    if(I18N[lang] && I18N[lang][key]){
+      const val = I18N[lang][key];
+      if (val.includes('<')) {
+        el.innerHTML = val;
+      } else {
+        el.textContent = val;
+      }
+    }
+  });
+  const inputPlaceholders = {
+    en: 'Ask about a standard, certification, or product…',
+    hi: 'किसी मानक, प्रमाणन या उत्पाद के बारे में पूछें…',
+    gu: 'કોઈપણ ધોરણ, પ્રમાણન અથવા ઉત્પાદન વિશે પૂછો…'
+  };
+  const searchPlaceholders = {
+    en: 'Try “LED bulb”, “gold jewellery”, “steel bars”…',
+    hi: '“पानी की बोतल”, “फुटवियर”, “LED” आज़माएं…',
+    gu: '“LED બલ્બ”, “સોનાના આભૂષણ”, “સ્ટીલ બાર” અજમાવો…'
+  };
+  document.getElementById('input').placeholder = inputPlaceholders[lang] || inputPlaceholders.en;
+  document.getElementById('std-search').placeholder = searchPlaceholders[lang] || searchPlaceholders.en;
+}
+
+/* ============ NAV ============ */
+function goTo(id){
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  const target = document.getElementById('sec-'+id);
+  if(target) target.classList.add('active');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active', b.dataset.nav===id));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.querySelectorAll('nav button').forEach(b=> b.onclick = ()=> goTo(b.dataset.nav));
+
+/* ================= ASSISTANT (chat) ================= */
+const KB = [
+  { keys:['led','bulb','light'],
+    chip:{en:'What standard applies to LED bulbs?', hi:'LED बल्ब पर कौन सा मानक लागू होता है?', gu:'LED બલ્બ પર કયું ધોરણ લાગુ પડે છે?'},
+    en:`<p>LED bulbs for general lighting fall under <b>IS 16102 (Part 2)</b>, and are covered by BIS's <b>Compulsory Registration Scheme (CRS)</b> — manufacturers must register the product and affix the Standard Mark before sale.</p><p>You'll need test reports covering photometric performance, safety, and EMI/EMC, submitted through the CRS portal.</p>`,
+    hi:`<p>सामान्य प्रकाश व्यवस्था के लिए LED बल्ब <b>IS 16102 (भाग 2)</b> के अंतर्गत आते हैं, और BIS की <b>अनिवार्य पंजीकरण योजना (CRS)</b> के तहत कवर होते हैं।</p><p>पंजीकरण के लिए फोटोमेट्रिक प्रदर्शन, सुरक्षा और EMI/EMC को कवर करने वाली परीक्षण रिपोर्ट CRS पोर्टल के माध्यम से जमा करनी होती है।</p>`,
+    gu:`<p>સામાન્ય લાઇટિંગ માટેના LED બલ્બ <b>IS 16102 (ભાગ 2)</b> હેઠળ આવે છે અને BIS ની <b>ફરજિયાત નોંધણી યોજના (CRS)</b> હેઠળ આવરી લેવામાં આવ્યા છે.</p><p>નોંધણી માટે ફોટોમેટ્રિક પ્રદર્શન, સલામતી અને EMI/EMC ટેસ્ટ રિપોર્ટ CRS પોર્ટલ દ્વારા સબમિટ કરવા જરૂરી છે.</p>`,
+    citations:[{label:'IS 16102-2:2020 §5',type:'std'},{label:'CRS · Electronics & IT Goods',type:'std'}] },
+  { keys:['isi','certification','license','certify','process'],
+    chip:{en:'How do I get ISI certification for my product?', hi:'अपने उत्पाद के लिए ISI प्रमाणन कैसे लें?', gu:'મારા ઉત્પાદન માટે ISI પ્રમાણપત્ર કેવી રીતે મેળવવું?'},
+    en:`<p>The ISI mark licensing process generally follows these steps:</p><ul><li>Identify the applicable Indian Standard</li><li>Apply via BIS <b>Manak Online</b> with product &amp; factory details</li><li>Factory audit and product sampling</li><li>License granted on satisfactory test results</li></ul><p>See the Certification journey tab for a full walkthrough.</p>`,
+    hi:`<p>ISI मार्क लाइसेंसिंग प्रक्रिया सामान्यतः इन चरणों में होती है:</p><ul><li>लागू भारतीय मानक की पहचान करें</li><li>BIS <b>मानक ऑनलाइन</b> पर आवेदन करें</li><li>फैक्ट्री ऑडिट और नमूनाकरण</li><li>संतोषजनक परिणाम पर लाइसेंस जारी</li></ul><p>पूरी जानकारी के लिए प्रमाणन यात्रा टैब देखें।</p>`,
+    gu:`<p>ISI માર્ક લાયસન્સ પ્રક્રિયા સામાન્ય રીતે આ તબક્કાઓને અનુસરે છે:</p><ul><li>લાગુ પડતા ભારતીય ધોરણની ઓળખ કરો</li><li>BIS <b>માનક ઓનલાઇન</b> પર અરજી કરો</li><li>ફેક્ટરી ઓડિટ અને સેમ્પલિંગ</li><li>સંતોષકારક ટેસ્ટ પરિણામો પર લાયસન્સ મંજૂર</li></ul><p>સંપૂર્ણ માર્ગદર્શન માટે પ્રમાણન યાત્રા ટેબ જુઓ.</p>`,
+    citations:[{label:'BIS Act 2016 · Sched. II',type:'std'},{label:'Conformity Assessment Regs.',type:'std'}] },
+  { keys:['hallmark','gold','jewel','huid'],
+    chip:{en:'Is hallmarking mandatory for gold jewellery?', hi:'सोने के आभूषणों के लिए हॉलमार्किंग अनिवार्य है क्या?', gu:'શું સોનાના દાગીના માટે હોલમાર્કિંગ ફરજિયાત છે?'},
+    en:`<p>Yes — mandatory in notified districts under <b>IS 1417</b> (purity) and <b>IS 2790</b> (marking). Every piece carries a unique <b>HUID</b>, traceable via BIS CARE. Try the Hallmark check tab to verify one.</p>`,
+    hi:`<p>हां — अधिसूचित जिलों में <b>IS 1417</b> (शुद्धता) और <b>IS 2790</b> (मार्किंग) के तहत अनिवार्य है। हर आभूषण पर एक विशिष्ट <b>HUID</b> होता है। सत्यापित करने के लिए हॉलमार्क जांच टैब आज़माएं।</p>`,
+    gu:`<p>હા — સૂચિત જિલ્લાઓમાં <b>IS 1417</b> (શુદ્ધતા) અને <b>IS 2790</b> (માર્કિંગ) હેઠળ ફરજિયાત છે. દરેક દાગીના પર એક અનોખો <b>HUID</b> હોય છે જેને BIS CARE દ્વારા ચકાસી શકાય છે.</p>`,
+    citations:[{label:'IS 1417:2016',type:'std'},{label:'IS 2790:2021 §6.1',type:'std'}] },
+  { keys:['lab','testing','test','laboratory'],
+    chip:{en:'Suggest a testing lab for footwear products', hi:'फुटवियर उत्पादों के लिए टेस्टिंग लैब सुझाएं', gu:'ફૂટવેર ઉત્પાદનો માટે ટેસ્ટિંગ લેબ સૂચવો'},
+    en:`<p>Footwear is tested against <b>IS 15298</b> for sole bonding, abrasion &amp; slip resistance. See the Testing labs tab, filterable by state.</p>`,
+    hi:`<p>फुटवियर का परीक्षण <b>IS 15298</b> के अंतर्गत सोल बॉन्डिंग, घर्षण व स्लिप प्रतिरोध पर होता है। राज्य अनुसार फ़िल्टर के लिए टेस्टिंग लैब टैब देखें।</p>`,
+    gu:`<p>પગરખાં (ફૂટવેર) નું પરીક્ષણ <b>IS 15298</b> હેઠળ સોલ બોન્ડિંગ અને સ્લિપ રેઝિસ્ટન્સ માટે થાય છે. રાજ્ય પ્રમાણે શોધવા માટે ટેસ્ટિંગ લેબ્સ ટેબ જુઓ.</p>`,
+    citations:[{label:'IS 15298-2:2019',type:'std'},{label:'BIS Recognised Labs · Footwear',type:'lab'}] },
+  { keys:['water bottle','bottle','pet','packaged water'],
+    chip:{en:'What standard applies to packaged drinking water?', hi:'पानी की बोतल के लिए कौन सा स्टैंडर्ड चाहिए?', gu:'પેકેજ્ડ પીવાના પાણી માટે કયું ધોરણ જરૂરી છે?'},
+    en:`<p>Packaged drinking water falls under <b>IS 14543</b>; PET bottles must comply with <b>IS 15410</b> for food-grade plastic safety. Mandatory BIS certification applies.</p>`,
+    hi:`<p>पैकेज्ड पेयजल <b>IS 14543</b> के अंतर्गत आता है; PET बोतलों को <b>IS 15410</b> का पालन करना होता है। अनिवार्य BIS प्रमाणन लागू है।</p>`,
+    gu:`<p>પેકેજ્ડ પીવાનું પાણી <b>IS 14543</b> હેઠળ આવે છે; PET બોટલો ફૂડ-ગ્રેડ પ્લાસ્ટિક સલામતી માટે <b>IS 15410</b> નું પાલન કરતી હોવી જોઈએ. ફરજિયાત BIS પ્રમાણન લાગુ પડે છે.</p>`,
+    citations:[{label:'IS 14543:2016',type:'std'},{label:'IS 15410:2023 §4.2',type:'std'}] },
+  { keys:['complain','complaint','consumer','fake','fraud','counterfeit'],
+    chip:{en:'How do I report a fake ISI mark?', hi:'नकली ISI मार्क की शिकायत कैसे करें?', gu:'નકલી ISI માર્કની ફરિયાદ કેવી રીતે કરવી?'},
+    en:`<p>Report suspected misuse via the <b>BIS CARE app</b> or National Consumer Helpline (1915), with photos and the licence/HUID if visible. BIS can act under the BIS Act, 2016.</p>`,
+    hi:`<p>संदिग्ध दुरुपयोग की शिकायत <b>BIS CARE ऐप</b> या राष्ट्रीय उपभोक्ता हेल्पलाइन (1915) पर करें। BIS अधिनियम, 2016 के तहत कार्रवाई हो सकती है।</p>`,
+    gu:`<p>દુરુપયોગની ફરિયાદ <b>BIS CARE એપ</b> અથવા રાષ્ટ્રીય ગ્રાહક હેલ્પલાઇન (1915) પર ફોટો અને લાયસન્સ/HUID સાથે નોંધાવો. BIS કાયદા ૨૦૧૬ હેઠળ કડક પગલાં લેવામાં આવે છે.</p>`,
+    citations:[{label:'BIS Act 2016 §29',type:'std'}] }
+];
+
+function stampHTML(c){ const icon = c.type==='lab'?flaskSVG:checkSVG; const cls = c.type==='lab'?'stamp lab':'stamp'; return `<span class="${cls}">${icon}${c.label}</span>`; }
+function escapeHTML(s){ const d=document.createElement('div'); d.innerText=s||''; return d.innerHTML; }
+
+/* Markdown Parser for rich conversational formatting */
+function formatAnswer(text) {
+  if (!text) return '';
+  let lines = text.split('\n');
+  let html = '';
+  let inList = false;
+
+  for (let rawLine of lines) {
+    let line = rawLine.trim();
+
+    if (!line) {
+      if (inList) { html += '</ul>'; inList = false; }
+      continue;
+    }
+
+    // Bold formatting
+    line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    line = line.replace(/__(.*?)__/g, '<strong>$1</strong>');
+
+    // Headers
+    if (line.startsWith('### ')) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += `<h4>${line.substring(4)}</h4>`;
+    } else if (line.startsWith('## ')) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += `<h3>${line.substring(3)}</h3>`;
+    } else if (line.startsWith('# ')) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += `<h2>${line.substring(2)}</h2>`;
+    }
+    // Bullet lists
+    else if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('• ')) {
+      if (!inList) { html += '<ul>'; inList = true; }
+      html += `<li>${line.substring(2)}</li>`;
+    }
+    // Numbered lists
+    else if (/^\d+\.\s+/.test(line)) {
+      if (!inList) { html += '<ul>'; inList = true; }
+      html += `<li>${line.replace(/^\d+\.\s+/, '')}</li>`;
+    }
+    // Normal paragraph
+    else {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += `<p>${line}</p>`;
+    }
+  }
+
+  if (inList) { html += '</ul>'; }
+  return html;
+}
+
+function copyToClipboard(text, btnEl) {
+  navigator.clipboard.writeText(text).then(() => {
+    const origHTML = btnEl.innerHTML;
+    btnEl.innerHTML = `✓ ${I18N[lang]['chat.copied'] || 'Copied!'}`;
+    btnEl.style.color = 'var(--seal)';
+    setTimeout(() => {
+      btnEl.innerHTML = origHTML;
+      btnEl.style.color = '';
+    }, 2000);
+  }).catch(err => console.error('Copy error', err));
+}
+
+function addRow(role, html, opts={}){
+  const chatEl = document.getElementById('chat');
+  const row = document.createElement('div');
+  row.className = 'row ' + role;
+  const avatar = role==='assistant' ? `<div class="avatar">IS</div>` : '';
+  const bubbleClass = 'bubble' + (lang==='hi' ? ' hi' : '');
+
+  let footerHTML = '';
+  if (role === 'assistant' && opts.rawText) {
+    const copyLabel = I18N[lang]['chat.copy'] || 'Copy';
+    footerHTML = `
+      <div class="bubble-footer">
+        <span style="color:var(--stone-light);font-size:10.5px;">Bureau of Indian Standards · Grounded</span>
+        <button class="copy-btn" onclick="copyToClipboard(decodeURIComponent('${encodeURIComponent(opts.rawText)}'), this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span>${copyLabel}</span>
+        </button>
+      </div>
+    `;
+  }
+
+  row.innerHTML = `${role==='assistant'?avatar:''}<div class="${bubbleClass}">${html}${footerHTML}</div>`;
+  chatEl.appendChild(row);
+  row.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  return row;
+}
+
+function addTyping(){
+  const chatEl = document.getElementById('chat');
+  const row = document.createElement('div');
+  row.className = 'row assistant typing';
+  row.innerHTML = `<div class="avatar">IS</div><div class="bubble"><span></span><span></span><span></span></div>`;
+  chatEl.appendChild(row);
+  row.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  return row;
+}
+
+function clearChat() {
+  const chatEl = document.getElementById('chat');
+  chatEl.innerHTML = '';
+  currentConversationId = '';
+  const welcomes = {
+    en: "Namaste. I'm BIS Sahayak — ask me about Indian Standards, certification schemes, hallmarking, testing labs, or consumer complaints.",
+    hi: "नमस्ते। मैं BIS सहायक हूँ — भारतीय मानकों, प्रमाणन योजनाओं, हॉलमार्किंग, टेस्टिंग लैब या उपभोक्ता शिकायतों के बारे में पूछें।",
+    gu: "નમસ્તે. હું BIS સહાયક છું — ભારતીય ધોરણો, પ્રમાણન યોજનાઓ, હોલમાર્કિંગ, ટેસ્ટિંગ લેબ્સ અથવા ગ્રાહક ફરિયાદો વિશે પૂછો."
+  };
+  addRow('assistant', `<p>${welcomes[lang] || welcomes.en}</p>`);
+}
+document.getElementById('clear-chat').onclick = clearChat;
+
+function renderFollowups(questions) {
+  if (!questions || !Array.isArray(questions) || questions.length === 0) return;
+  const chatEl = document.getElementById('chat');
+  const box = document.createElement('div');
+  box.className = 'followup-box';
+
+  const title = I18N[lang]['chat.followup_title'] || 'Suggested Follow-ups';
+  box.innerHTML = `<div class="followup-title">✦ ${title}</div><div class="followup-chips"></div>`;
+  const chipsContainer = box.querySelector('.followup-chips');
+
+  questions.slice(0, 3).forEach(q => {
+    const btn = document.createElement('button');
+    btn.className = 'followup-chip';
+    btn.textContent = q;
+    btn.onclick = () => {
+      box.remove();
+      handleQuery(q);
+    };
+    chipsContainer.appendChild(btn);
+  });
+
+  chatEl.appendChild(box);
+  box.scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+
+const BACKEND_URL = 'http://127.0.0.1:8000';
+
+async function handleQuery(text){
+  if(!text || !text.trim()) return;
+
+  const queryText = text.trim();
+  addRow('user', escapeHTML(queryText));
+  document.getElementById('input').value = '';
+
+  const typingRow = addTyping();
+
+  try {
+    // Connect to conversation-aware /api/chat endpoint
+    const res = await fetch(BACKEND_URL + '/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: queryText,
+        language: lang,
+        conversation_id: currentConversationId
+      })
+    });
+
+    if(!res.ok){
+      throw new Error('Server responded with ' + res.status);
+    }
+
+    const data = await res.json();
+    typingRow.remove();
+
+    if (data.conversation_id) {
+      currentConversationId = data.conversation_id;
+    }
+
+    let answerHTML = formatAnswer(data.answer || 'No answer returned.');
+    let citationsHTML = '';
+
+    const sources = data.citations || data.sources || [];
+    if(Array.isArray(sources) && sources.length > 0){
+      citationsHTML = `
+        <div class="citation-section">
+          <div class="citation-title">📚 BIS Sources &amp; Standards</div>
+      `;
+
+      sources.forEach(citation => {
+        const verified = String(citation.verified || '').toLowerCase() === 'yes' || citation.verified === true;
+        const sourceUrl = String(citation.source_url || '').trim();
+
+        citationsHTML += `
+          <div class="citation-card">
+            <div class="citation-main">
+              <strong>${escapeHTML(citation.is_number || 'BIS Standard')}</strong>
+              ${verified ? '<span class="verified-badge">✓ Verified</span>' : ''}
+            </div>
+            <div class="citation-category">
+              ${escapeHTML(citation.title || citation.category || 'BIS Knowledge Base')}
+            </div>
+            ${sourceUrl ? `
+              <a
+                href="${escapeHTML(sourceUrl)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="source-link"
+              >
+                View official record ↗
+              </a>
+            ` : ''}
+          </div>
+        `;
+      });
+
+      citationsHTML += '</div>';
+    }
+
+    addRow('assistant', answerHTML + citationsHTML, { rawText: data.answer });
+
+    // Render smart AI suggested follow-ups
+    if (data.suggested_questions && Array.isArray(data.suggested_questions) && data.suggested_questions.length > 0) {
+      renderFollowups(data.suggested_questions);
+    }
+
+  } catch(err) {
+    typingRow.remove();
+    console.error('BIS Sahayak backend error:', err);
+
+    const errorMsgs = {
+      en: {
+        h: 'Could not connect to BIS Sahayak.',
+        p: 'Please verify that the FastAPI backend server is running at:',
+        cmd: 'uvicorn main:app --reload'
+      },
+      hi: {
+        h: 'BIS सहायक से कनेक्ट नहीं हो सका।',
+        p: 'कृपया जांचें कि FastAPI बैकएंड सर्वर यहां चल रहा है:',
+        cmd: 'uvicorn main:app --reload'
+      },
+      gu: {
+        h: 'BIS સહાયક સાથે કનેક્ટ થઈ શક્યું નથી.',
+        p: 'કૃપા કરીને ચકાસો કે FastAPI બેકએન્ડ સર્વર અહીં ચાલી રહ્યું છે:',
+        cmd: 'uvicorn main:app --reload'
+      }
+    };
+    const msg = errorMsgs[lang] || errorMsgs.en;
+
+    addRow('assistant', `
+      <p><strong>⚠️ ${msg.h}</strong></p>
+      <p>${msg.p} <code>${escapeHTML(BACKEND_URL)}</code></p>
+      <p><code>${msg.cmd}</code></p>
+    `);
+  }
+}
+
+function renderChips(){
+  const chipsEl = document.getElementById('chips');
+  chipsEl.innerHTML = '';
+  KB.forEach(entry=>{
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.innerHTML = searchSVG.replace('width="24" height="24"','width="13" height="13"') + (entry.chip[lang]||entry.chip.en);
+    btn.onclick = () => handleQuery(entry.chip[lang]||entry.chip.en);
+    chipsEl.appendChild(btn);
+  });
+}
+
+document.getElementById('send').onclick = () => handleQuery(document.getElementById('input').value);
+document.getElementById('input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    handleQuery(e.target.value);
+  }
+});
+
+/* ================= LIVE FIND STANDARD ================= */
+const CATS = [
+  { id:'all', file:'all', en:'All', hi:'सभी', gu:'બધા' },
+  { id:'electronics', file:'01_electronics', en:'Electronics', hi:'इलेक्ट्रॉनिक्स', gu:'ઇલેક્ટ્રોનિક્સ' },
+  { id:'food', file:'02_food_and_water', en:'Food & water', hi:'खाद्य व पानी', gu:'ખોરાક અને પાણી' },
+  { id:'jewellery', file:'03_jewellery_and_hallmarking', en:'Jewellery', hi:'आभूषण', gu:'ઝવેરાત અને હોલમાર્કિંગ' },
+  { id:'footwear', file:'04_footwear', en:'Footwear', hi:'फुटवियर', gu:'પગરખાં (ફૂટવેર)' },
+  { id:'construction', file:'05_construction', en:'Construction', hi:'निर्माण', gu:'બાંધકામ' },
+  { id:'textiles', file:'06_textiles', en:'Textiles', hi:'वस्त्र', gu:'કાપડ' }
+];
+
+let activeCat = 'all';
+let standardsTimer = null;
+let standardsRequest = null;
+
+function renderCatChips(){
+  const el = document.getElementById('cat-chips');
+  el.innerHTML = '';
+
+  CATS.forEach(c=>{
+    const b = document.createElement('button');
+    b.className = 'cat-chip' + (activeCat===c.id ? ' active' : '');
+    b.textContent = c[lang] || c.en;
+
+    b.onclick = () => {
+      activeCat = c.id;
+      renderCatChips();
+      loadStandards(document.getElementById('std-search').value.trim());
+    };
+
+    el.appendChild(b);
+  });
+}
+
+function setStandardsStatus(online){
+  const el = document.getElementById('std-api-status');
+  if(!el) return;
+
+  if(online){
+    el.className = 'std-api-status';
+    el.innerHTML = '<span class="api-dot"></span> Backend connected';
+  }else{
+    el.className = 'std-api-status offline';
+    el.innerHTML = '<span class="api-dot"></span> Backend unavailable';
+  }
+}
+
+function escapeHtml(value) {
+
+    if (value === null || value === undefined) {
+        return '';
+    }
+
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+
+function formatAnswer(text) {
+    if (!text) return '';
+
+    return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+}
+
+function scorePercent(score){
+  const n = Number(score);
+  if(!Number.isFinite(n)) return null;
+  return Math.max(0, Math.min(100, Math.round(n * 100)));
+}
+
+function cleanVerification(value){
+  const v = String(value || '').toLowerCase();
+
+  if(v.includes('yes') || v.includes('verified')){
+    return {
+      label: lang==='gu' ? 'સ્રોત ચકાસાયેલ' : (lang==='hi' ? 'स्रोत सत्यापित' : 'Source verified'),
+      cls:'verified'
+    };
+  }
+
+  return {
+    label: lang==='gu' ? 'ચકાસણી બાકી' : (lang==='hi' ? 'सत्यापन लंबित' : 'Verification pending'),
+    cls:'pending'
+  };
+}
+
+function categoryLabel(category){
+  const c = CATS.find(x => x.id === category || x.file === category);
+  return c ? (c[lang] || c.en) : category.replace(/^0[1-6]_/, '').replace(/_/g,' ');
+}
+
+function escapeAttr(value){
+  return escapeHTML(String(value || '')).replace(/"/g, '&quot;');
+}
+
+function renderStandardCard(s){
+  const score = scorePercent(s._score);
+  const verification = cleanVerification(s.verified);
+
+  const mandatoryText =
+    String(s.certification_type || '').toLowerCase().includes('mandatory')
+      ? (lang==='gu' ? 'ફરજિયાત' : (lang==='hi' ? 'अनिवार्य' : 'Mandatory'))
+      : (lang==='gu' ? 'મરજિયાત / અન્ય' : (lang==='hi' ? 'स्वैच्छिक / अन्य' : 'Voluntary / Other'));
+
+  const matchLabel = lang==='gu' ? 'મેચ' : (lang==='hi' ? 'मैच' : 'Match');
+
+  const source = String(s.source_url || '').trim();
+
+  return `
+    <div class="std-card">
+
+      <div class="std-card-top">
+        <span class="std-code">${escapeHTML(s.is_number || 'Standard')}</span>
+
+        <span class="std-badge ${
+          String(s.certification_type || '').toLowerCase().includes('mandatory')
+            ? 'mandatory'
+            : 'voluntary'
+        }">
+          ${mandatoryText}
+        </span>
+      </div>
+
+      <h3>${escapeHTML(s.title || 'Indian Standard')}</h3>
+
+      <p>${escapeHTML(
+        s.scope_description ||
+        'Relevant information is available in the current BIS Sahayak knowledge base.'
+      )}</p>
+
+      <div class="std-card-meta">
+
+        <span class="std-meta-pill">
+          ${escapeHTML(categoryLabel(s.category_file || ''))}
+        </span>
+
+        <span class="std-meta-pill">
+          ${escapeHTML(s.scheme || 'BIS scheme information')}
+        </span>
+
+        <span class="std-meta-pill ${verification.cls}">
+          ${verification.label}
+        </span>
+
+      </div>
+
+      ${
+        score !== null
+        ? `
+          <div class="match-box">
+            <span>${matchLabel} ${score}%</span>
+            <span class="match-track">
+              <span class="match-fill" style="width:${score}%"></span>
+            </span>
+          </div>
+        `
+        : ''
+      }
+
+      <div class="std-source">
+        ${
+          source
+          ? `Source: <a href="${escapeAttr(source)}" target="_blank" rel="noopener">BIS / source record ↗</a>`
+          : 'Source: Current BIS Sahayak knowledge base'
+        }
+      </div>
+
+    </div>
+  `;
+}
+
+function renderStandardsLoading(){
+  const loadingMsg = {
+    en: 'Searching the BIS Sahayak knowledge base…',
+    hi: 'संबंधित मानक खोजे जा रहे हैं…',
+    gu: 'સંબંધિત ધોરણો શોધાઈ રહ્યા છે…'
+  };
+  document.getElementById('std-results').innerHTML = `
+    <div class="std-loading">
+      <span class="spinner"></span>
+      <span>${loadingMsg[lang] || loadingMsg.en}</span>
+    </div>
+  `;
+}
+
+function renderStandardsEmpty(query){
+  const titleMsg = query
+    ? (lang==='gu' ? 'કોઈ યોગ્ય મેળ નથી' : (lang==='hi' ? 'कोई मजबूत मिलान नहीं' : 'No strong match'))
+    : (lang==='gu' ? 'શોધ શરૂ કરો' : (lang==='hi' ? 'खोज शुरू करें' : 'Start your search'));
+
+  const message = query
+    ? (lang==='gu'
+        ? 'આ શોધ માટે વર્તમાન જ્ઞાન આધારમાં કોઈ મેળ મળ્યો નથી. ઉત્પાદનનું થોડું વધુ વિગતવાર વર્ણન આપો.'
+        : (lang==='hi'
+            ? 'इस खोज के लिए वर्तमान ज्ञान आधार में कोई पर्याप्त मिलान नहीं मिला। उत्पाद का थोड़ा अधिक विवरण दें।'
+            : 'No strong match was found in the current knowledge base. Try a more specific product description.'))
+    : (lang==='gu'
+        ? 'ઉત્પાદન દાખલ કરીને અથવા શ્રેણી પસંદ કરીને શોધ શરૂ કરો.'
+        : (lang==='hi'
+            ? 'उत्पाद या श्रेणी चुनकर खोज शुरू करें।'
+            : 'Enter a product or choose a category to begin.'));
+
+  document.getElementById('std-results').innerHTML = `
+    <div class="empty-state">
+      ${searchSVG}
+      <div class="std-empty-title">${titleMsg}</div>
+      <p class="std-empty-text">${message}</p>
+    </div>
+  `;
+}
+
+function renderStandardsError(){
+  setStandardsStatus(false);
+
+  const errTitle = {
+    en: 'Backend unavailable',
+    hi: 'बैकएंड उपलब्ध नहीं है',
+    gu: 'બેકએન્ડ ઉપલબ્ધ નથી'
+  };
+
+  const errSub = {
+    en: 'Start the FastAPI server and try the search again.',
+    hi: 'FastAPI सर्वर चालू करें और फिर दोबारा खोजें।',
+    gu: 'FastAPI સર્વર ચાલુ કરો અને ફરીથી શોધો.'
+  };
+
+  document.getElementById('std-results').innerHTML = `
+    <div class="empty-state">
+      ${xSVG}
+      <div class="std-empty-title">
+        ${errTitle[lang] || errTitle.en}
+      </div>
+      <p class="std-empty-text">
+        ${errSub[lang] || errSub.en}
+      </p>
+    </div>
+  `;
+}
+
+function updateStandardsSummary(count, query){
+  const el = document.getElementById('std-result-sub');
+  if(!el) return;
+
+  if(!query && activeCat === 'all'){
+    if(lang==='gu') el.textContent = `${count} રેકોર્ડ્સ ઉપલબ્ધ છે`;
+    else if(lang==='hi') el.textContent = `${count} उपलब्ध रिकॉर्ड`;
+    else el.textContent = `${count} records available`;
+    return;
+  }
+
+  const category = activeCat === 'all'
+    ? ''
+    : ` · ${categoryLabel(activeCat)}`;
+
+  if(lang==='gu') el.textContent = `${count} સંબંધિત પરિણામો${category}`;
+  else if(lang==='hi') el.textContent = `${count} संबंधित परिणाम${category}`;
+  else el.textContent = `${count} relevant result${count === 1 ? '' : 's'}${category}`;
+}
+
+async function loadStandards(query=''){
+  const q = query.trim();
+
+  clearTimeout(standardsTimer);
+
+  renderStandardsLoading();
+
+  if(standardsRequest){
+    try { standardsRequest.abort(); } catch(e){}
+  }
+
+  standardsRequest = new AbortController();
+
+  const params = new URLSearchParams();
+
+  /*
+    The current backend already supports /api/standards?q=...
+    and returns ranked TF-IDF results. Category filtering is handled
+    client-side for search results so we don't lose ranked matches.
+  */
+  if(q) params.set('q', q);
+
+  try{
+    const res = await fetch(
+      `${BACKEND_URL}/api/standards?${params.toString()}`,
+      { signal: standardsRequest.signal }
+    );
+
+    if(!res.ok){
+      throw new Error(`Server responded with ${res.status}`);
+    }
+
+    const data = await res.json();
+    let results = Array.isArray(data.results) ? data.results : [];
+
+    setStandardsStatus(true);
+
+    if(activeCat !== 'all'){
+      const selected = CATS.find(c => c.id === activeCat);
+      const fileName = selected ? selected.file : activeCat;
+      results = results.filter(r =>
+        String(r.category_file || '').toLowerCase() === String(fileName).toLowerCase()
+      );
+    }
+
+    /*
+      If a category is selected with no query, the backend returns the
+      complete dataset. If a query is present, it returns ranked hits.
+    */
+    if(q && results.length){
+      results.sort((a,b) => Number(b._score || 0) - Number(a._score || 0));
+    }
+
+    updateStandardsSummary(results.length, q);
+
+    if(!results.length){
+      renderStandardsEmpty(q);
+      return;
+    }
+
+    document.getElementById('std-results').innerHTML =
+      results.map(renderStandardCard).join('');
+
+  }catch(err){
+    if(err.name === 'AbortError') return;
+
+    console.error('Standards search failed:', err);
+    renderStandardsError();
+  }
+}
+
+function initStandards(){
+  renderCatChips();
+
+  const input = document.getElementById('std-search');
+  const button = document.getElementById('std-search-btn');
+
+  input.addEventListener('input', () => {
+    clearTimeout(standardsTimer);
+
+    standardsTimer = setTimeout(() => {
+      loadStandards(input.value);
+    }, 350);
+  });
+
+  input.addEventListener('keydown', e => {
+    if(e.key === 'Enter'){
+      clearTimeout(standardsTimer);
+      loadStandards(input.value);
+    }
+  });
+
+  button.onclick = () => loadStandards(input.value);
+
+  /*
+    Initial state: load all records from the backend so the tab
+    immediately demonstrates that it is connected to real data.
+  */
+  loadStandards('');
+}
+
+/* ================= CERTIFICATION JOURNEY ================= */
+const STEPS = [
+  { en:{h:'Identify the applicable standard', p:'Confirm which Indian Standard covers your product category using the Find a standard tab.'},
+    hi:{h:'लागू मानक की पहचान करें', p:'मानक खोजें टैब का उपयोग करके पुष्टि करें कि आपके उत्पाद पर कौन सा भारतीय मानक लागू होता है।'},
+    gu:{h:'લાગુ પડતા ધોરણની ઓળખ કરો', p:'ધોરણ શોધો ટેબનો ઉપયોગ કરીને પુષ્ટિ કરો કે તમારા ઉત્પાદન પર કયું ભારતીય ધોરણ લાગુ પડે છે.'} },
+  { en:{h:'Apply on Manak Online', p:'Submit your application with product, factory, and manufacturing process details on the BIS portal.'},
+    hi:{h:'मानक ऑनलाइन पर आवेदन करें', p:'BIS पोर्टल पर उत्पाद, फैक्ट्री और निर्माण प्रक्रिया विवरण के साथ आवेदन जमा करें।'},
+    gu:{h:'માનક ઓનલાઇન પર અરજી કરો', p:'BIS પોર્ટલ પર ઉત્પાદન, ફેક્ટરી અને ઉત્પાદન પ્રક્રિયાની વિગતો સાથે અરજી સબમિટ કરો.'} },
+  { en:{h:'Factory audit & sampling', p:'A BIS officer inspects your facility and draws product samples for independent testing.'},
+    hi:{h:'फैक्ट्री ऑडिट व नमूनाकरण', p:'BIS अधिकारी आपकी सुविधा का निरीक्षण करता है और स्वतंत्र परीक्षण हेतु नमूने लेता है।'},
+    gu:{h:'ફેક્ટરી ઓડિટ અને સેમ્પલિંગ', p:'BIS અધિકારી તમારી સુવિધાનું નિરીક્ષણ કરે છે અને સ્વતંત્ર પરીક્ષણ માટે નમૂનાઓ લે છે.'} },
+  { en:{h:'Testing at a BIS-recognised lab', p:'Samples are tested against the standard\u2019s parameters — see the Testing labs tab for nearby options.'},
+    hi:{h:'BIS-मान्यता प्राप्त लैब में परीक्षण', p:'नमूनों का मानक के मापदंडों पर परीक्षण होता है — नज़दीकी विकल्पों के लिए टेस्टिंग लैब टैब देखें।'},
+    gu:{h:'BIS-માન્ય લેબમાં પરીક્ષણ', p:'નમૂનાઓનું ધોરણના પરિમાણો સામે પરીક્ષણ કરવામાં આવે છે — વિકલ્પો માટે ટેસ્ટિંગ લેબ્સ ટેબ જુઓ.'} },
+  { en:{h:'Licence granted', p:'On satisfactory results, BIS grants the licence to use the Standard Mark, typically valid 1–2 years and renewable.'},
+    hi:{h:'लाइसेंस जारी', p:'संतोषजनक परिणाम पर, BIS स्टैंडर्ड मार्क उपयोग का लाइसेंस देता है, सामान्यतः 1–2 वर्ष के लिए वैध व नवीकरणीय।'},
+    gu:{h:'લાયસન્સ મંજૂર', p:'સંતોષકારક પરિણામો પર, BIS સ્ટાન્ડર્ડ માર્ક વાપરવાનું લાયસન્સ આપે છે, સામાન્ય રીતે ૧-૨ વર્ષ માટે માન્ય.'} }
+];
+let doneSteps = new Set();
+
+function renderSteps(){
+  const el = document.getElementById('steps');
+  el.innerHTML = STEPS.map((s,i)=>{
+    const isDone = doneSteps.has(i);
+    const t = s[lang] || s.en;
+    const doneLabel = lang === 'gu' ? 'પૂર્ણ ચિહ્નિત ✓' : (lang === 'hi' ? 'पूर्ण चिह्नित ✓' : 'Marked done ✓');
+    const markLabel = lang === 'gu' ? 'પૂર્ણ ચિહ્નિત કરો' : (lang === 'hi' ? 'पूर्ण चिह्नित करें' : 'Mark as done');
+    return `
+    <div class="step ${isDone?'done':''}" data-idx="${i}">
+      <div class="step-marker">
+        <div class="step-num">${isDone ? checkSVG : (i+1)}</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <h3>${t.h}</h3>
+        <p>${t.p}</p>
+        <button class="step-toggle" data-toggle="${i}">${isDone ? doneLabel : markLabel}</button>
+      </div>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('[data-toggle]').forEach(btn=>{
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const idx = parseInt(btn.dataset.toggle);
+      if(doneSteps.has(idx)) doneSteps.delete(idx); else doneSteps.add(idx);
+      renderSteps();
+      updateProgress();
+    };
+  });
+}
+function updateProgress(){
+  const pct = Math.round((doneSteps.size / STEPS.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  const progressText = {
+    en: `${doneSteps.size} of ${STEPS.length} steps completed`,
+    hi: `${STEPS.length} में से ${doneSteps.size} चरण पूर्ण`,
+    gu: `${STEPS.length} માંથી ${doneSteps.size} પગલાં પૂર્ણ`
+  };
+  document.getElementById('progress-label').textContent = progressText[lang] || progressText.en;
+}
+
+/* ================= HALLMARK VERIFY ================= */
+const HUID_DB = {
+  'AZ4R2K': { purity:'916 (22K)', centre:'Sunrise Assaying & Hallmarking Centre, Surat', date:'14 Feb 2025', jeweller:'Reg. No. GJ-AHC-0421' },
+  'K9J2QX': { purity:'750 (18K)', centre:'Metro Hallmarking Centre, Jaipur', date:'02 Nov 2024', jeweller:'Reg. No. RJ-AHC-1187' }
+};
+document.getElementById('huid-btn').onclick = verifyHUID;
+document.getElementById('huid-input').addEventListener('keydown', e=>{ if(e.key==='Enter') verifyHUID(); });
+function verifyHUID(){
+  const raw = document.getElementById('huid-input').value.trim().toUpperCase();
+  const resultEl = document.getElementById('huid-result');
+  if(!raw){ resultEl.innerHTML=''; return; }
+  const rec = HUID_DB[raw];
+  if(rec){
+    const verifiedLabel = lang==='gu' ? 'ચકાસાયેલ હોલમાર્ક' : (lang==='hi' ? 'सत्यापित हॉलमार्क' : 'Verified hallmark');
+    const purityLabel = lang==='gu' ? 'શુદ્ધતા' : (lang==='hi' ? 'शुद्धता' : 'Purity');
+    const centreLabel = lang==='gu' ? 'હોલમાર્કિંગ કેન્દ્ર' : (lang==='hi' ? 'हॉलमार्किंग केंद्र' : 'Hallmarking centre');
+    const dateLabel = lang==='gu' ? 'તારીખ' : (lang==='hi' ? 'तिथि' : 'Date');
+    const jewellerLabel = lang==='gu' ? 'ઝવેરી' : (lang==='hi' ? 'जौहरी' : 'Jeweller');
+
+    resultEl.innerHTML = `
+      <div class="verify-result ok">
+        <div class="verify-result-head">${checkSVG}<span>${verifiedLabel}</span></div>
+        <div class="verify-row"><span>${purityLabel}</span><span>${rec.purity}</span></div>
+        <div class="verify-row"><span>${centreLabel}</span><span>${rec.centre}</span></div>
+        <div class="verify-row"><span>${dateLabel}</span><span>${rec.date}</span></div>
+        <div class="verify-row"><span>${jewellerLabel}</span><span class="mono">${rec.jeweller}</span></div>
+      </div>`;
+  } else {
+    const notFoundLabel = lang==='gu' ? 'રેકોર્ડ મળ્યો નથી' : (lang==='hi' ? 'रिकॉर्ड नहीं मिला' : 'No record found');
+    const notFoundDesc = lang==='gu'
+      ? 'આ HUID ડેમો રેકોર્ડ્સમાં ઉપલબ્ધ નથી. સંપૂર્ણ સંસ્કરણમાં આ સીધું BIS CARE ડેટાબેઝ સામે ચકાસવામાં આવશે.'
+      : (lang==='hi'
+          ? 'यह HUID डेमो रिकॉर्ड में मौजूद नहीं है। पूर्ण संस्करण में यह BIS CARE डेटाबेस से सीधे जांचा जाएगा।'
+          : 'This HUID isn’t in the demo records. The full build would check this directly against the BIS CARE database.');
+
+    resultEl.innerHTML = `
+      <div class="verify-result bad">
+        <div class="verify-result-head">${xSVG}<span>${notFoundLabel}</span></div>
+        <p style="font-size:12.5px; color:var(--stone);">${notFoundDesc}</p>
+      </div>`;
+  }
+}
+
+/* ================= LABS (API-powered) ================= */
+let LABS_DATA = [];
+let LABS_STATES = [];
+
+async function fetchLabs(category = 'all', state = 'all') {
+  try {
+    const params = new URLSearchParams();
+    if (category && category !== 'all') params.set('category', category);
+    if (state && state !== 'all') params.set('state', state);
+
+    const res = await fetch(BACKEND_URL + '/api/labs?' + params.toString());
+    if (!res.ok) throw new Error('Labs API error');
+    const data = await res.json();
+    LABS_DATA = data.labs || [];
+    renderLabs();
+  } catch (err) {
+    console.error('Failed to fetch labs:', err);
+    // Fallback to empty
+    LABS_DATA = [];
+    renderLabs();
+  }
+}
+
+async function fetchLabStates() {
+  try {
+    const res = await fetch(BACKEND_URL + '/api/labs/states');
+    if (!res.ok) throw new Error('States API error');
+    const data = await res.json();
+    LABS_STATES = data.states || [];
+  } catch (err) {
+    LABS_STATES = [];
+  }
+}
+
+async function renderLabFilters() {
+  if (LABS_STATES.length === 0) await fetchLabStates();
+
+  const catSel = document.getElementById('lab-cat-filter');
+  const stateSel = document.getElementById('lab-state-filter');
+
+  const cats = ['all', 'electronics', 'food', 'jewellery', 'footwear', 'construction', 'textiles'];
+  const catLabel = id => (CATS.find(c=>c.id===id) || {en:id,hi:id,gu:id})[lang] || id;
+
+  const allCatsText = { en:'All categories', hi:'सभी श्रेणियां', gu:'બધી શ્રેણીઓ' };
+  const allStatesText = { en:'All states', hi:'सभी राज्य', gu:'બધા રાજ્યો' };
+
+  catSel.innerHTML = cats.map(c =>
+    `<option value="${c}">${c==='all' ? (allCatsText[lang] || allCatsText.en) : catLabel(c)}</option>`
+  ).join('');
+
+  stateSel.innerHTML = ['all', ...LABS_STATES].map(s =>
+    `<option value="${s}">${s==='all' ? (allStatesText[lang] || allStatesText.en) : s}</option>`
+  ).join('');
+}
+
+function renderLabs() {
+  const el = document.getElementById('lab-list');
+
+  if (LABS_DATA.length === 0) {
+    const emptyMsg = {
+      en: 'No labs match this filter.',
+      hi: 'इस फ़िल्टर से कोई लैब नहीं मिली।',
+      gu: 'આ ફિલ્ટર માટે કોઈ લેબ્સ મળી નથી.'
+    };
+    el.innerHTML = `<div class="empty-state">${flaskSVG}<p>${emptyMsg[lang] || emptyMsg.en}</p></div>`;
+    return;
+  }
+
+  el.innerHTML = LABS_DATA.map(l => `
+    <div class="lab-card">
+      <div style="flex:1">
+        <h3>${l.lab_name || l.name || ''}</h3>
+        <div class="meta">${l.city || ''}, ${l.state || ''}</div>
+        ${l.standards_tested ? `<div class="meta" style="margin-top:3px;font-size:11px;color:var(--bis-blue);">Standards: ${l.standards_tested}</div>` : ''}
+        ${l.accreditation ? `<div class="meta" style="margin-top:2px;font-size:10.5px;color:var(--seal);">✓ ${l.accreditation}</div>` : ''}
+        ${l.contact_email ? `<div class="meta" style="margin-top:2px;font-size:10.5px;"><a href="mailto:${l.contact_email}" style="color:var(--bis-blue);text-decoration:none;">${l.contact_email}</a></div>` : ''}
+      </div>
+      <span class="lab-tag">${(CATS.find(c=>c.id===l.category)||{en:l.category||l.cat,hi:l.category||l.cat,gu:l.category||l.cat})[lang] || l.category || l.cat || ''}</span>
+    </div>
+  `).join('');
+}
+
+document.addEventListener('change', e => {
+  if (e.target.id === 'lab-cat-filter' || e.target.id === 'lab-state-filter') {
+    const cat = document.getElementById('lab-cat-filter').value;
+    const state = document.getElementById('lab-state-filter').value;
+    fetchLabs(cat, state);
+  }
+});
+
+/* ================= LANGUAGE SWITCH ================= */
+document.getElementById('btn-en').onclick = () => setLang('en');
+document.getElementById('btn-hi').onclick = () => setLang('hi');
+document.getElementById('btn-gu').onclick = () => setLang('gu');
+
+function setLang(l){
+  lang = l;
+  try { localStorage.setItem('bis_language', l); } catch(e){}
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.getElementById('btn-hi').classList.toggle('active', l==='hi');
+  document.getElementById('btn-gu').classList.toggle('active', l==='gu');
+  applyI18n();
+  renderChips();
+  renderCatChips();
+  loadStandards(document.getElementById('std-search').value.trim());
+  renderSteps();
+  updateProgress();
+  renderLabFilters();
+  fetchLabs();
+}
+
+/* ================= INIT ================= */
+const savedLang = localStorage.getItem('bis_language');
+if (savedLang && ['en', 'hi', 'gu'].includes(savedLang)) {
+  lang = savedLang;
+}
+document.getElementById('btn-en').classList.toggle('active', lang==='en');
+document.getElementById('btn-hi').classList.toggle('active', lang==='hi');
+document.getElementById('btn-gu').classList.toggle('active', lang==='gu');
+applyI18n();
+
+const welcomeText = {
+  en: "Namaste. I'm BIS Sahayak — ask me about Indian Standards, certification schemes, hallmarking, testing labs, or consumer complaints. Powered by intelligent BIS knowledge.",
+  hi: "नमस्ते। मैं BIS सहायक हूँ — भारतीय मानकों, प्रमाणन योजनाओं, हॉलमार्किंग, टेस्टिंग लैब या उपभोक्ता शिकायतों के बारे में पूछें। BIS ज्ञान से संचालित।",
+  gu: "નમસ્તે. હું BIS સહાયક છું — ભારતીય ધોરણો, પ્રમાણન યોજનાઓ, હોલમાર્કિંગ, ટેસ્ટિંગ લેબ્સ અથવા ગ્રાહક ફરિયાદો વિશે પૂછો. BIS જ્ઞાન દ્વારા સંચાલિત."
+};
+addRow('assistant', `<p>${welcomeText[lang] || welcomeText.en}</p>`);
+renderChips();
+initStandards();
+renderSteps();
+updateProgress();
+renderLabFilters();
+fetchLabs();
+</script>
+</body>
+</html>

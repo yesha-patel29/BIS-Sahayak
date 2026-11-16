@@ -1,0 +1,26 @@
+lab_name,city,state,category,standards_tested,accreditation,contact_phone,contact_email,website
+BIS Central Laboratory,Sahibabad,Uttar Pradesh,electronics,"IS 16102, IS 302, IS 13252",BIS Recognized,0120-2771700,clsahibabad@bis.gov.in,https://www.bis.gov.in
+BIS Southern Regional Office Lab,Chennai,Tamil Nadu,electronics,"IS 16102, IS 302, IS 13252",BIS Recognized,044-22542519,sro@bis.gov.in,https://www.bis.gov.in
+National Test House (NTH) Kolkata,Kolkata,West Bengal,electronics,"IS 16102, IS 302, IS 1293",NABL Accredited,033-23501424,nth.kolkata@gov.in,https://nth.gov.in
+ERTL East,Kolkata,West Bengal,electronics,"IS 13252, IS 16102, IS 302",NABL Accredited,033-23575060,ertleast@gov.in,https://www.ertleast.org
+ERTL South,Thiruvananthapuram,Kerala,electronics,"IS 16102, IS 302, IS 13252",NABL Accredited,0471-2491097,ertlsouth@gov.in,https://www.ertlsouth.org
+Central Food Laboratory (CFL),Kolkata,West Bengal,food,"IS 14543, IS 13428, IS 7183",FSSAI Recognized,033-23503667,cfl.kolkata@gov.in,https://www.cfl.gov.in
+Central Food Technological Research Institute (CFTRI),Mysuru,Karnataka,food,"IS 14543, IS 13428, IS 4251",NABL Accredited,0821-2514534,director@cftri.res.in,https://www.cftri.res.in
+National Dairy Research Institute,Karnal,Haryana,food,"IS 14543, IS 12183, IS 3507",NABL Accredited,0184-2259002,ndri@icar.gov.in,https://www.ndri.res.in
+Export Inspection Agency (EIA),Mumbai,Maharashtra,food,"IS 14543, IS 13428, IS 7183",EIC Recognized,022-24932407,eia.mumbai@eicindia.gov.in,https://www.eicindia.gov.in
+BIS Hallmarking Centre Ahmedabad,Ahmedabad,Gujarat,jewellery,"IS 1417, IS 1418, IS 2790",BIS Recognized,079-26587821,bro.ahmedabad@bis.gov.in,https://www.bis.gov.in
+Sunrise Assaying & Hallmarking Centre,Surat,Gujarat,jewellery,"IS 1417, IS 1418, IS 2790",BIS Recognized,0261-2467890,info@sunriseassaying.com,https://www.sunriseassaying.com
+Metro Hallmarking Centre,Jaipur,Rajasthan,jewellery,"IS 1417, IS 1418, IS 2790",BIS Recognized,0141-2560134,info@metrohallmarking.com,https://www.metrohallmarking.com
+National Hallmarking Centre,New Delhi,Delhi,jewellery,"IS 1417, IS 1418, IS 2790",BIS Recognized,011-23230131,nro@bis.gov.in,https://www.bis.gov.in
+India Government Mint Assay Office,Mumbai,Maharashtra,jewellery,"IS 1417, IS 1418",Government of India,022-22618695,mint.mumbai@gov.in,https://www.spmcil.com
+National Footwear Testing Laboratory,Agra,Uttar Pradesh,footwear,"IS 15298, IS 5914, IS 2394",NABL Accredited,0562-2530823,nftl.agra@gov.in,https://www.nftl.org
+Central Footwear Training Institute,Chennai,Tamil Nadu,footwear,"IS 15298, IS 5914, IS 2394",CFTI Certified,044-22250505,cfti.chennai@gov.in,https://www.cftichennai.org
+Footwear Design & Development Institute (FDDI),Noida,Uttar Pradesh,footwear,"IS 15298, IS 5914, IS 2394",NABL Accredited,0120-4500100,info@fddi.in,https://www.fddi.in
+National Council for Cement and Building Materials (NCCBM),Ballabgarh,Haryana,construction,"IS 456, IS 1786, IS 269, IS 8112",NABL Accredited,0129-2242051,nccbm@nic.in,https://www.nccbm.org.in
+Central Building Research Institute (CBRI),Roorkee,Uttarakhand,construction,"IS 456, IS 1786, IS 383",CSIR Lab,01332-272243,director@cbri.res.in,https://www.cbri.res.in
+Structural Engineering Research Centre (SERC),Chennai,Tamil Nadu,construction,"IS 456, IS 1786, IS 2062",NABL Accredited,044-22542139,serc@serc.res.in,https://www.serc.res.in
+National Institute of Technology (NIT) Testing Lab,Surat,Gujarat,construction,"IS 456, IS 1786, IS 269",NABL Accredited,0261-2201573,nit.surat@gov.in,https://www.svnit.ac.in
+Textile Committee Lab,Mumbai,Maharashtra,textiles,"IS 11621, IS 15370, IS 7064",NABL Accredited,022-26528733,textile.committee@gov.in,https://www.textilescommittee.gov.in
+Northern India Textile Research Association (NITRA),Ghaziabad,Uttar Pradesh,textiles,"IS 11621, IS 15370, IS 7064",NABL Accredited,0120-2783402,info@nitratextile.org,https://www.nitratextile.org
+South India Textile Research Association (SITRA),Coimbatore,Tamil Nadu,textiles,"IS 11621, IS 15370, IS 7064",NABL Accredited,0422-2574367,info@sitra.org.in,https://www.sitra.org.in
+Ahmedabad Textile Industry Research Association (ATIRA),Ahmedabad,Gujarat,textiles,"IS 11621, IS 15370, IS 7064",NABL Accredited,079-26307921,info@atira.in,https://www.atira.in
