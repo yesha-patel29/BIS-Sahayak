@@ -58,4 +58,40 @@ The system uses TF-IDF similarity search over curated BIS datasets and optionall
 
 ---
 
+User Query / Browser Extension │ ▼ FastAPI Backend │ ┌────────┴────────┐ ▼ ▼ Page Analyzer TF-IDF Retriever (DOM Content) (data/*.csv) │ │ └────────┬────────┘ ▼ Relevant Standards Context │ ▼ Google Gemini API (Optional) │ ▼ Conversational / Actionable Response
+
+
+---
+
+## Technology Stack
+
+| Component | Technology |
+|---|---|
+| **Frontend** | HTML5, CSS3, Modern JavaScript |
+| **Backend** | Python 3.12+, FastAPI, Uvicorn |
+| **Retrieval Engine** | TF-IDF Vectorization, Scikit-Learn, Pandas |
+| **AI / LLM** | Google Gemini API (`google-genai`) |
+| **Browser Extension** | Chrome Extensions API (Manifest V3) |
+| **Data Format** | Curated CSV Knowledge Bases |
+
+---
+
+## Project Structure
+
+```text
+BIS SAHAYAK/
+├── backend/
+│   ├── main.py              # FastAPI application & REST endpoints
+│   ├── retrieval.py         # RAG core, TF-IDF search, & Gemini integration
+│   ├── conversation.py      # Session and conversation management
+│   ├── requirements.txt     # Python dependencies
+│   └── data/                # BIS standards & testing lab datasets (.csv)
+├── extension/               # Chrome Browser Copilot extension
+│   ├── manifest.json
+│   ├── popup/
+│   └── content/
+├── bis-sahayak-v2.html.html # Web application user interface
+├── run.py                   # Root startup script
+└── start_backend.bat        # Windows quick-launch script
+
 ## System Architecture
