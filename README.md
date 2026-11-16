@@ -58,11 +58,6 @@ The system uses TF-IDF similarity search over curated BIS datasets and optionall
 
 ---
 
-User Query / Browser Extension │ ▼ FastAPI Backend │ ┌────────┴────────┐ ▼ ▼ Page Analyzer TF-IDF Retriever (DOM Content) (data/*.csv) │ │ └────────┬────────┘ ▼ Relevant Standards Context │ ▼ Google Gemini API (Optional) │ ▼ Conversational / Actionable Response
-
-
----
-
 ## Technology Stack
 
 | Component | Technology |
